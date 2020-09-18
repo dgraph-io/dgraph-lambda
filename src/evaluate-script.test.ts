@@ -33,8 +33,19 @@ describe(evaluateScript, () => {
     it("works with dgraph graphql", async () => {
       const runScript = evaluateScript(`
         async function todoTitles({graphql}) {
-          const results = await graphql('{ queryTodo { title } } ')
+          const results = await graphql('{ queryTodo { title } }')
           return results.data.queryTodo.map(t => t.title)
+        }
+        addGraphQLResolvers({ "Query.todoTitles": todoTitles })`)
+      const results = await runScript({ type: "Query.todoTitles", args: [], parent: null });
+      expect(new Set(results)).toEqual(new Set(["Kick Ass", "Chew Bubblegum"]))
+    })
+
+    it("works with dgraph graphql", async () => {
+      const runScript = evaluateScript(`
+        async function todoTitles({dql}) {
+          const results = await dql('{ queryTitles(func: type(Todo)){ Todo.title } }')
+          return results.data.queryTitles.map(t => t["Todo.title"])
         }
         addGraphQLResolvers({ "Query.todoTitles": todoTitles })`)
       const results = await runScript({ type: "Query.todoTitles", args: [], parent: null });
