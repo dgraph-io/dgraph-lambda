@@ -1,5 +1,5 @@
 {
-  "name": "kappa-mu",
+  "name": "omega",
   "version": "1.0.0",
   "description": "Serverless Framework for Dgraph",
   "main": "dist/index.js",
@@ -9,7 +9,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/dgraph-io/kappa-mu.git"
+    "url": "git+https://github.com/dgraph-io/omega.git"
   },
   "keywords": [
     "dgraph"
@@ -17,9 +17,9 @@
   "author": "Tejas Dinkar <tejas@gja.in>",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/dgraph-io/kappa-mu/issues"
+    "url": "https://github.com/dgraph-io/omega/issues"
   },
-  "homepage": "https://github.com/dgraph-io/kappa-mu#readme",
+  "homepage": "https://github.com/dgraph-io/omega#readme",
   "dependencies": {
     "atob": "^2.1.2",
     "btoa": "^1.2.1",
