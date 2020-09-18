@@ -6,8 +6,12 @@ COPY package.json package-lock.json ./
 RUN npm install
 
 COPY . .
-ENV NODE_ENV production
-RUN npm run build && rm -rf node_modules && npm install --no-optional
+ARG nodeEnv=production
+ENV NODE_ENV $nodeEnv
+RUN npm run build && if [[ "$nodeEnv" == "production" ]]; then rm -rf node_modules && npm install --no-optional; fi
+
+# Used just for tests
+ENTRYPOINT [ "npm", "run" ]
 
 FROM node:12-alpine
 ENV NODE_ENV production

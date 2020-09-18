@@ -1,25 +1,13 @@
 import { EventTarget } from 'event-target-shim';
 import vm from 'vm';
 
-const { Request, Response, Headers } = require("node-fetch");
-const { URL } = require("url");
-const fetch = require("node-fetch");
-const atob = require("atob");
-const btoa = require("btoa");
-const crypto = new (require("node-webcrypto-ossl"))();
-const { TextDecoder, TextEncoder } = require("util");
-
-type GraphQLEventFields = {
-  type: string,
-  parent: Record<string, any> | null,
-  args: any[],
-}
-
-type GraphQLEvent = GraphQLEventFields & {
-  respondWith: (r: any | Promise<any>) => void,
-  // graphql: (s: string, vars: Record<string,any> | undefined) => Promise<{data: any}>,
-  // dql: (s: string, vars: Record<string, any> | undefined) => Promise<{ data: any }>,
-}
+import fetch, { Request, Response, Headers } from "node-fetch";
+import { URL } from "url";
+import atob from "atob";
+import btoa from "btoa";
+import { TextDecoder, TextEncoder } from "util";
+import { Crypto } from "node-webcrypto-ossl";
+import { graphql, dql } from './dgraph';
 
 class GraphQLResolverEventTarget extends EventTarget {
   addGraphQLResolvers(resolvers: {[key: string]: (e: GraphQLEvent) => (any | Promise<any>)}) {
@@ -49,7 +37,7 @@ function newContext(eventTarget: GraphQLResolverEventTarget) {
     btoa,
 
     // Crypto
-    crypto,
+    crypto: new Crypto(),
     TextDecoder,
     TextEncoder,
 
@@ -80,7 +68,9 @@ export function evaluateScript(source: string) {
     let ret = undefined;
     const event = {
       ...e,
-      respondWith: (x: any | Promise<any>) => { ret = x }
+      respondWith: (x: any | Promise<any>) => { ret = x },
+      graphql,
+      dql,
     }
     target.dispatchEvent(event)
     return await ret;

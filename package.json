@@ -29,9 +29,12 @@
     "node-webcrypto-ossl": "^2.1.2"
   },
   "devDependencies": {
-    "@types/node-fetch": "^2.5.7",
+    "@types/atob": "^2.1.2",
+    "@types/btoa": "^1.2.3",
     "@types/jest": "^26.0.14",
+    "@types/node-fetch": "^2.5.7",
     "jest": "^26.4.2",
+    "sleep-promise": "^8.0.1",
     "ts-jest": "^26.3.0",
     "typescript": "^4.0.2"
   }
