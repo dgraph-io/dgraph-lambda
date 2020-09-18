@@ -24,6 +24,10 @@ async function startWorkers() {
       " and signal: " +
       signal
     );
+    if(signal === "SIGINT") {
+      cluster.disconnect();
+      return;
+    }
     await sleep(100);
     cluster.fork();
   });
@@ -33,7 +37,8 @@ async function startServer() {
   const source = (await fs.promises.readFile(process.env.SCRIPT_PATH || "./script.js")).toString()
   const app = scriptToExpress(source);
   const port = process.env.PORT || "8686";
-  app.listen(port, () => console.log("Server Listening on port " + port + "!"))
+  const server = app.listen(port, () => console.log("Server Listening on port " + port + "!"))
+  cluster.on('disconnect', () => server.close())
 }
 
 if(cluster.isMaster) {
