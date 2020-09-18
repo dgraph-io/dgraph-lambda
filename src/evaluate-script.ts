@@ -6,7 +6,7 @@ const { URL } = require("url");
 const fetch = require("node-fetch");
 const atob = require("atob");
 const btoa = require("btoa");
-// const crypto = new (require("node-webcrypto-ossl"))();
+const crypto = new (require("node-webcrypto-ossl"))();
 const { TextDecoder, TextEncoder } = require("util");
 
 type GraphQLEventFields = {
@@ -17,6 +17,8 @@ type GraphQLEventFields = {
 
 type GraphQLEvent = GraphQLEventFields & {
   respondWith: (r: any | Promise<any>) => void,
+  // graphql: (s: string, vars: Record<string,any> | undefined) => Promise<{data: any}>,
+  // dql: (s: string, vars: Record<string, any> | undefined) => Promise<{ data: any }>,
 }
 
 class GraphQLResolverEventTarget extends EventTarget {
@@ -47,7 +49,7 @@ function newContext(eventTarget: GraphQLResolverEventTarget) {
     btoa,
 
     // Crypto
-    // crypto,
+    crypto,
     TextDecoder,
     TextEncoder,
 

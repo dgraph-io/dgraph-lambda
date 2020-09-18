@@ -25,7 +25,8 @@
     "btoa": "^1.2.1",
     "event-target-shim": "^5.0.1",
     "express": "^4.17.1",
-    "node-fetch": "^2.6.1"
+    "node-fetch": "^2.6.1",
+    "node-webcrypto-ossl": "^2.1.2"
   },
   "devDependencies": {
     "@types/node-fetch": "^2.5.7",
