@@ -4,6 +4,7 @@
   "description": "Serverless Framework for Dgraph",
   "main": "dist/index.js",
   "scripts": {
+    "build": "tsc",
     "test": "jest"
   },
   "repository": {
@@ -20,7 +21,6 @@
   },
   "homepage": "https://github.com/dgraph-io/kappa-mu#readme",
   "dependencies": {
-    "@types/node-fetch": "^2.5.7",
     "atob": "^2.1.2",
     "btoa": "^1.2.1",
     "event-target-shim": "^5.0.1",
@@ -28,6 +28,7 @@
     "node-fetch": "^2.6.1"
   },
   "devDependencies": {
+    "@types/node-fetch": "^2.5.7",
     "@types/jest": "^26.0.14",
     "jest": "^26.4.2",
     "ts-jest": "^26.3.0",
