@@ -4,7 +4,7 @@
   "description": "Serverless Framework for Dgraph",
   "main": "dist/index.js",
   "scripts": {
-    "start": "SCRIPT_PATH=./demo-script.js node .",
+    "start": "SCRIPT_PATH=./script.js node .",
     "build": "tsc",
     "test": "jest"
   },
