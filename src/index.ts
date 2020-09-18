@@ -1,6 +1,7 @@
 import cluster from 'cluster';
 import fs from 'fs'
 import { scriptToExpress } from './script-to-express';
+import sleep from 'sleep-promise';
 
 async function startWorkers() {
   const cores = 4;
@@ -14,7 +15,7 @@ async function startWorkers() {
     console.log("Worker started pid#" + worker.process.pid);
   });
 
-  cluster.on("exit", (worker, code, signal) => {
+  cluster.on("exit", async (worker, code, signal) => {
     console.log(
       "Worker #" +
       worker.process.pid +
@@ -23,12 +24,13 @@ async function startWorkers() {
       " and signal: " +
       signal
     );
+    await sleep(100);
     cluster.fork();
   });
 }
 
 async function startServer() {
-  const source = await (await fs.promises.readFile(process.env.SCRIPT_PATH || "/app/script")).toString()
+  const source = (await fs.promises.readFile(process.env.SCRIPT_PATH || "./script.js")).toString()
   const app = scriptToExpress(source);
   const port = process.env.PORT || "8686";
   app.listen(port, () => console.log("Server Listening on port " + port + "!"))
