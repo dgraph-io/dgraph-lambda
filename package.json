@@ -1,0 +1,36 @@
+{
+  "name": "kappa-mu",
+  "version": "1.0.0",
+  "description": "Serverless Framework for Dgraph",
+  "main": "dist/index.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dgraph-io/kappa-mu.git"
+  },
+  "keywords": [
+    "dgraph"
+  ],
+  "author": "Tejas Dinkar <tejas@gja.in>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/dgraph-io/kappa-mu/issues"
+  },
+  "homepage": "https://github.com/dgraph-io/kappa-mu#readme",
+  "dependencies": {
+    "@types/node-fetch": "^2.5.7",
+    "atob": "^2.1.2",
+    "btoa": "^1.2.1",
+    "event-target-shim": "^5.0.1",
+    "express": "^4.17.1",
+    "node-fetch": "^2.6.1"
+  },
+  "devDependencies": {
+    "@types/jest": "^26.0.14",
+    "jest": "^26.4.2",
+    "ts-jest": "^26.3.0",
+    "typescript": "^4.0.2"
+  }
+}
