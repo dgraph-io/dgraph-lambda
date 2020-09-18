@@ -5,7 +5,7 @@ type GraphQLResponse = {
 
 type GraphQLEventFields = {
   type: string,
-  parent: Record<string, any> | null,
+  parent?: Record<string, any>,
   args: any[],
 }
 

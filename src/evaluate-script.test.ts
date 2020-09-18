@@ -6,14 +6,14 @@ const integrationTest = process.env.INTEGRATION_TEST === "true" ? describe : des
 describe(evaluateScript, () => {
   it("returns undefined if there was no event", async () => {
     const runScript = evaluateScript("")
-    expect(await runScript({type: "Query.unknown", args: [], parent: null})).toBeUndefined()
+    expect(await runScript({type: "Query.unknown", args: []})).toBeUndefined()
   })
 
   it("returns the value if there was a resolver registered", async () => {
     const runScript = evaluateScript(`addGraphQLResolvers({
       "Query.fortyTwo": async e => 42
     })`)
-    expect(await runScript({ type: "Query.fortyTwo", args: [], parent: null })).toEqual(42)
+    expect(await runScript({ type: "Query.fortyTwo", args: [] })).toEqual(42)
   })
 
   it("passes the args and parents over", async () => {
@@ -37,7 +37,7 @@ describe(evaluateScript, () => {
           return results.data.queryTodo.map(t => t.title)
         }
         addGraphQLResolvers({ "Query.todoTitles": todoTitles })`)
-      const results = await runScript({ type: "Query.todoTitles", args: [], parent: null });
+      const results = await runScript({ type: "Query.todoTitles", args: [] });
       expect(new Set(results)).toEqual(new Set(["Kick Ass", "Chew Bubblegum"]))
     })
 
@@ -48,7 +48,7 @@ describe(evaluateScript, () => {
           return results.data.queryTitles.map(t => t["Todo.title"])
         }
         addGraphQLResolvers({ "Query.todoTitles": todoTitles })`)
-      const results = await runScript({ type: "Query.todoTitles", args: [], parent: null });
+      const results = await runScript({ type: "Query.todoTitles", args: [] });
       expect(new Set(results)).toEqual(new Set(["Kick Ass", "Chew Bubblegum"]))
     })
   })
