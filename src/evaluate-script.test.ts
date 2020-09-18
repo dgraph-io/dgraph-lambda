@@ -41,7 +41,7 @@ describe(evaluateScript, () => {
       expect(new Set(results)).toEqual(new Set(["Kick Ass", "Chew Bubblegum"]))
     })
 
-    it("works with dgraph graphql", async () => {
+    it("works with dgraph dql", async () => {
       const runScript = evaluateScript(`
         async function todoTitles({dql}) {
           const results = await dql('{ queryTitles(func: type(Todo)){ Todo.title } }')
