@@ -43,6 +43,10 @@ curl localhost:8686/graphql-worker -H "Content-Type: application/json" -d '[{"re
 
 If you would like to add libraries, then use webpack --target=webworker to compile your script. We'll fill out these instructions later.
 
+## Security
+
+Currently, this uses node context to try and make sure that users aren't up to any fishy business. However, contexts aren't true security, and we should eventually switch to isolates. In the meanwhile, we will basically have kube kill this if it takes a lot of CPU for say 5 secs
+
 ## Environment
 * [x] fetch
 * [x] graphql / dql
