@@ -1,5 +1,6 @@
 import { evaluateScript } from './evaluate-script';
 import { waitForDgraph, loadSchema, runQuery } from './test-utils'
+import sleep from 'sleep-promise';
 
 const integrationTest = process.env.INTEGRATION_TEST === "true" ? describe : describe.skip;
 
@@ -27,6 +28,7 @@ describe(evaluateScript, () => {
     beforeAll(async () => {
       await waitForDgraph();
       await loadSchema(`type Todo { id: ID!, title: String! }`)
+      await sleep(100)
       await runQuery(`mutation { addTodo(input: [{title: "Kick Ass"}, {title: "Chew Bubblegum"}]) { numUids } }`)
     })
 
