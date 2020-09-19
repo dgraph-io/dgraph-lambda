@@ -28,7 +28,7 @@ describe(evaluateScript, () => {
     beforeAll(async () => {
       await waitForDgraph();
       await loadSchema(`type Todo { id: ID!, title: String! }`)
-      await sleep(100)
+      await sleep(250)
       await runQuery(`mutation { addTodo(input: [{title: "Kick Ass"}, {title: "Chew Bubblegum"}]) { numUids } }`)
     })
 
