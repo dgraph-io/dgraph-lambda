@@ -8,7 +8,7 @@ RUN npm install
 COPY . .
 ARG nodeEnv=production
 ENV NODE_ENV $nodeEnv
-RUN npm run build && if [[ "$nodeEnv" == "production" ]]; then rm -rf node_modules && npm install --no-optional; fi
+RUN npm run build && if [[ "$nodeEnv" == "production" ]]; then mv node_modules/node-webcrypto-ossl tmp && rm -rf node_modules && mkdir node_modules && mv tmp node_modules/node-webcrypto-ossl && npm install --no-optional; fi
 
 # Used just for tests
 ENTRYPOINT [ "npm", "run" ]

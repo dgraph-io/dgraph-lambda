@@ -64,15 +64,26 @@ export function evaluateScript(source: string) {
   const context = newContext(target)
   script.runInContext(context);
 
-  return async function(e: GraphQLEventFields): Promise<any> {
-    let ret = undefined;
+  return async function(e: GraphQLEventFields): Promise<any[] | undefined> {
+    let retPromise: ResolverResponse | undefined = undefined;
     const event = {
       ...e,
-      respondWith: (x: any | Promise<any>) => { ret = x },
+      respondWith: (x: ResolverResponse) => { retPromise = x },
       graphql,
       dql,
     }
     target.dispatchEvent(event)
-    return await ret;
+
+    if(retPromise === undefined) {
+      return undefined
+    }
+
+    let ret = await (retPromise as ResolverResponse);
+    if(!Array.isArray(ret) || ret.length !== e.parents.length) {
+      process.env.NODE_ENV != "test" && console.error(`Value returned from ${e.type} was not an array or of incorrect length`)
+      return undefined
+    }
+
+    return await Promise.all(ret);
   }
 }
