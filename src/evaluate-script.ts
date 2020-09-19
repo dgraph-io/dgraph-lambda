@@ -10,11 +10,20 @@ import { Crypto } from "node-webcrypto-ossl";
 import { graphql, dql } from './dgraph';
 
 class GraphQLResolverEventTarget extends EventTarget {
-  addGraphQLResolvers(resolvers: {[key: string]: (e: GraphQLEvent) => (any | Promise<any>)}) {
+  addMultiParentGraphQLResolvers(resolvers: {[key: string]: (e: GraphQLEvent) => (any | Promise<any>)}) {
     for (const [name, resolver] of Object.entries(resolvers)) {
       this.addEventListener(name, e => {
         const event = e as unknown as GraphQLEvent;
         event.respondWith(resolver(event))
+      })
+    }
+  }
+
+  addGraphQLResolvers(resolvers: { [key: string]: (e: GraphQLEventWithParent) => (any | Promise<any>) }) {
+    for (const [name, resolver] of Object.entries(resolvers)) {
+      this.addEventListener(name, e => {
+        const event = e as unknown as GraphQLEvent;
+        event.respondWith(event.parents.map(parent => resolver({...event, parent})))
       })
     }
   }
@@ -54,6 +63,7 @@ function newContext(eventTarget: GraphQLResolverEventTarget) {
     self: eventTarget,
     addEventListener: eventTarget.addEventListener.bind(eventTarget),
     removeEventListener: eventTarget.removeEventListener.bind(eventTarget),
+    addMultiParentGraphQLResolvers: eventTarget.addMultiParentGraphQLResolvers.bind(eventTarget),
     addGraphQLResolvers: eventTarget.addGraphQLResolvers.bind(eventTarget),
   });
 }

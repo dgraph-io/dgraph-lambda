@@ -3,7 +3,7 @@ import supertest from 'supertest'
 
 describe(scriptToExpress, () => {
   it("calls the appropriate function, passing the resolver, parent and args", async () => {
-    const app = scriptToExpress(`addGraphQLResolvers({
+    const app = scriptToExpress(`addMultiParentGraphQLResolvers({
       "Query.fortyTwo": ({parents, args}) => parents.map(({n}) => n + args[0])
     })`)
     const response = await supertest(app)
@@ -16,7 +16,7 @@ describe(scriptToExpress, () => {
   })
 
   it("can also be called as an array", async () => {
-    const app = scriptToExpress(`addGraphQLResolvers({
+    const app = scriptToExpress(`addMultiParentGraphQLResolvers({
       "Query.fortyTwo": ({parents, args}) => parents.map(({n}) => n + args[0])
     })`)
     const response = await supertest(app)

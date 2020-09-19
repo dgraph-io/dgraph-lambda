@@ -4,24 +4,23 @@ Omega is a serverless platform for running JS on Slash GraphQL (or Dgraph).
 
 ## Running a script
 
-A script looks something like this. Each resolver must return an array of results, matching the number of parents. If the query is a root query/mutation, parents will be set to `[null]`.
+A script looks something like this. There are two ways to add a resolver
+* `addGraphQLResolver` which recieves `{ parent, args }` and returns a single value
+* `addMultiParentGraphQLResolver` which received `{ parents, args }` and should return an array of results, each result matching to one parent. This method will have much better performance if you are able to club multiple requests together
+
+If the query is a root query/mutation, parents will be set to `[null]`.
 
 ```javascript
-async function greeting({ parents, args = [] }) {
+const fullName = ({ parent: { firstName, lastName } }) => `${firstName} ${lastName}`
+
+function greeting({parent: {firstName}, args = [] }) {
   const [greeting] = args;
-  return parents.map(({ firstName }) => `${greeting || "Hello"} ${firstName || "World"}!`)
+  return `${greeting || "Hello"} ${firstName || "World"}!`
 }
 
-async function todoTitles({ parents, graphql }) {
-  return parents.map(async () => {
-    // You can also use dql() instead of graphql()
-    const results = await graphql('{ queryTodo { title } }')
-    return results.data.queryTodo.map(t => t.title)
-  })
-}
-
-async function fullName({parents}) {
-  return parents.map(({firstName, lastName}) => `${firstName} ${lastName}`)
+async function todoTitles({ graphql }) {
+  const results = await graphql('{ queryTodo { title } }')
+  return results.data.queryTodo.map(t => t.title)
 }
 
 self.addGraphQLResolvers({
@@ -30,6 +29,15 @@ self.addGraphQLResolvers({
   "Query.todoTitles": todoTitles,
 })
 
+async function reallyComplexDql({parents, dql}) {
+  const ids = parents.map(p => p.id);
+  const someComplexResults = await dql(`really-complex-query-here with ${ids}`);
+  return parents.map(parent => someComplexResults[parent.id])
+}
+
+self.addMultiParentGraphQLResolvers({
+  "User.reallyComplexProperty": reallyComplexDql
+})
 ```
 
 ## Running Locally
