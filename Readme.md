@@ -1,6 +1,6 @@
 # Omega
 
-Omega is a serverless platform for running arbitrary JS on Dgraph GraphQL.
+Omega is a serverless platform for running JS on Slash GraphQL (or Dgraph).
 
 ## Running a script
 
