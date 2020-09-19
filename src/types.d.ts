@@ -5,12 +5,14 @@ type GraphQLResponse = {
 
 type GraphQLEventFields = {
   type: string,
-  parent?: Record<string, any>,
+  parents: Record<string, any>[] | [null],
   args: any[],
 }
 
+type ResolverResponse = any[] | Promise<any>[] | Promise<any[]>;
+
 type GraphQLEvent = GraphQLEventFields & {
-  respondWith: (r: any | Promise<any>) => void,
+  respondWith: (r: ResolverResponse) => void,
   graphql: (s: string, vars: Record<string, any> | undefined) => Promise<GraphQLResponse>,
   dql: (s: string, vars: Record<string, any> | undefined) => Promise<GraphQLResponse>,
 }

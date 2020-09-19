@@ -4,7 +4,7 @@ import { evaluateScript } from './evaluate-script'
 function bodyToEvent(b: any) {
   return {
     type: b.resolver,
-    parent: b.parent || undefined,
+    parents: b.parents || [null],
     args: b.args || [],
   }
 }

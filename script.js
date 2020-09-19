@@ -1,11 +1,13 @@
-async function greeting({parent = {}, args = [], graphql, dql}) {
+async function greeting({ parents, args = [] }) {
   const [greeting] = args;
-  return `${greeting || "Hello"} ${parent.name || "World"}!`
+  return parents.map(({ name }) => `${greeting || "Hello"} ${name || "World"}!`)
 }
 
-async function todoTitles({ graphql }) {
-  const results = await graphql('{ queryTodo { title } }')
-  return results.data.queryTodo.map(t => t.title)
+async function todoTitles({ parents, graphql }) {
+  return parents.map(async () => {
+    const results = await graphql('{ queryTodo { title } }')
+    return results.data.queryTodo.map(t => t.title)
+  })
 }
 
 self.addGraphQLResolvers({

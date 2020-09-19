@@ -4,17 +4,19 @@ Omega is a serverless platform for running arbitrary JS on Dgraph GraphQL.
 
 ## Running a script
 
-A script looks something like this
+A script looks something like this. Each resolver must return an array of results, matching the number of parents. If the query is a root query/mutation, parents will be set to `[null]`.
 
 ```javascript
-async function greeting({parent = {}, args = [], graphql, dql}) {
+async function greeting({ parents, args = [] }) {
   const [greeting] = args;
-  return `${greeting || "Hello"} ${parent.name || "World"}!`
+  return parents.map(({ name }) => `${greeting || "Hello"} ${name || "World"}!`)
 }
 
-async function todoTitles({ graphql }) {
-  const results = await graphql('{ queryTodo { title } }')
-  return results.data.queryTodo.map(t => t.title)
+async function todoTitles({ parents, graphql }) {
+  return parents.map(async () => {
+    const results = await graphql('{ queryTodo { title } }')
+    return results.data.queryTodo.map(t => t.title)
+  })
 }
 
 self.addGraphQLResolvers({
@@ -34,10 +36,20 @@ docker run -it --rm -p 8686:8686 -v /path/to/script.js:/app/script.js -e DGRAPH_
 
 Then test it out with the following curls
 ```bash
-curl localhost:8686/graphql-worker -H "Content-Type: application/json" -d '{"resolver":"User.greeting","parent":{"name":"Tejas"}}'
+curl localhost:8686/graphql-worker -H "Content-Type: application/json" -d '{"resolver":"User.greeting","parents":[{"name":"Tejas"}]}'
 # Now lets send an array of queries
-curl localhost:8686/graphql-worker -H "Content-Type: application/json" -d '[{"resolver":"User.greeting","parent":{"name":"Tejas"}},{"resolver":"Query.todoTitles"}]'
+curl localhost:8686/graphql-worker -H "Content-Type: application/json" -d '[{"resolver":"User.greeting","parents":[{"name":"Tejas"}]},{"resolver":"Query.todoTitles"}]'
 ```
+
+## Environment
+
+We are trying to make the environment match the environment you'd get from ServiceWorker.
+
+* [x] fetch
+* [x] graphql / dql
+* [x] base64
+* [x] URL
+* [ ] crypto - should test this
 
 ## Adding libraries
 
@@ -46,10 +58,3 @@ If you would like to add libraries, then use webpack --target=webworker to compi
 ## Security
 
 Currently, this uses node context to try and make sure that users aren't up to any fishy business. However, contexts aren't true security, and we should eventually switch to isolates. In the meanwhile, we will basically have kube kill this if it takes a lot of CPU for say 5 secs
-
-## Environment
-* [x] fetch
-* [x] graphql / dql
-* [x] base64
-* [x] URL
-* [ ] crypto - should test this
