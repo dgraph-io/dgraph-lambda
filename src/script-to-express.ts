@@ -5,7 +5,7 @@ function bodyToEvent(b: any): GraphQLEventFields {
   return {
     type: b.resolver,
     parents: b.parents || null,
-    args: b.args || [],
+    args: b.args || {},
   }
 }
 

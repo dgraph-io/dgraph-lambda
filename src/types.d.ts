@@ -6,7 +6,7 @@ type GraphQLResponse = {
 type GraphQLEventFields = {
   type: string,
   parents: (Record<string, any>)[] | null,
-  args: any[],
+  args: Record<string,any>,
 }
 
 type ResolverResponse = any[] | Promise<any>[] | Promise<any[]>;
