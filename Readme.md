@@ -1,6 +1,6 @@
-# Omega
+# Dgraph Lambda
 
-Omega is a serverless platform for running JS on Slash GraphQL (or Dgraph).
+DGraphh Lambda is a serverless platform for running JS on Slash GraphQL (or Dgraph).
 
 ## Running a script
 
@@ -38,10 +38,28 @@ self.addMultiParentGraphQLResolvers({
 
 First launch dgraph and load it with the todo schema (and add a todo or two).
 
+```graphql
+type User {
+   id: ID!
+   firstName: String!
+   lastName: String!
+#  fullName: String @lambda
+}
+type Todo {
+   id: ID!
+   title: String
+}
+#type Query {
+#  todoTitles: [String] @lambda
+#}
+```
+
 ```bash
 # host.docker.internal may not work on old versions of docker
 docker run -it --rm -p 8686:8686 -v /path/to/script.js:/app/script.js -e DGRAPH_URL=http://host.docker.internal:8080 tdinkar/omega
 ```
+
+Note for linux: host.docker.internal doesn't work on older versions of docker on linux. You can use `DGRAPH_URL=http://172.17.0.1:8080` instead
 
 Then test it out with the following curls
 ```bash

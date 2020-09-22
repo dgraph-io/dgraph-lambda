@@ -60,7 +60,8 @@ describe(evaluateScript, () => {
     it("works with dgraph dql", async () => {
       const runScript = evaluateScript(`
         async function todoTitles({dql}) {
-          const results = await dql('{ queryTitles(func: type(Todo)
+          const results = await dql('{ queryTitles(func: type(Todo)){ Todo.title } }')
+          return results.data.queryTitles.map(t => t["Todo.title"])
         }
         addGraphQLResolvers({ "Query.todoTitles": todoTitles })`)
       const results = await runScript({ type: "Query.todoTitles", args: [], parents: null });
