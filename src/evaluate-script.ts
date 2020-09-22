@@ -9,6 +9,10 @@ import { TextDecoder, TextEncoder } from "util";
 import { Crypto } from "node-webcrypto-ossl";
 import { graphql, dql } from './dgraph';
 
+function getParents(e: GraphQLEventFields): (Record<string,any>|null)[] {
+  return e.parents || [null]
+}
+
 class GraphQLResolverEventTarget extends EventTarget {
   addMultiParentGraphQLResolvers(resolvers: {[key: string]: (e: GraphQLEvent) => (any | Promise<any>)}) {
     for (const [name, resolver] of Object.entries(resolvers)) {
@@ -23,7 +27,7 @@ class GraphQLResolverEventTarget extends EventTarget {
     for (const [name, resolver] of Object.entries(resolvers)) {
       this.addEventListener(name, e => {
         const event = e as unknown as GraphQLEvent;
-        event.respondWith(event.parents.map(parent => resolver({...event, parent})))
+        event.respondWith(getParents(event).map(parent => resolver({...event, parent})))
       })
     }
   }
@@ -74,7 +78,7 @@ export function evaluateScript(source: string) {
   const context = newContext(target)
   script.runInContext(context);
 
-  return async function(e: GraphQLEventFields): Promise<any[] | undefined> {
+  return async function(e: GraphQLEventFields): Promise<any | undefined> {
     let retPromise: ResolverResponse | undefined = undefined;
     const event = {
       ...e,
@@ -88,12 +92,13 @@ export function evaluateScript(source: string) {
       return undefined
     }
 
-    let ret = await (retPromise as ResolverResponse);
-    if(!Array.isArray(ret) || ret.length !== e.parents.length) {
+    const resolvedArray = await (retPromise as ResolverResponse);
+    if(!Array.isArray(resolvedArray) || resolvedArray.length !== getParents(e).length) {
       process.env.NODE_ENV != "test" && console.error(`Value returned from ${e.type} was not an array or of incorrect length`)
       return undefined
     }
 
-    return await Promise.all(ret);
+    const response = await Promise.all(resolvedArray);
+    return e.parents === null ? response[0] : response;
   }
 }

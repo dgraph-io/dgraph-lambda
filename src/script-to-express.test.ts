@@ -15,19 +15,31 @@ describe(scriptToExpress, () => {
     expect(response.body).toEqual([42]);
   })
 
-  it("can also be called as an array", async () => {
-    const app = scriptToExpress(`addMultiParentGraphQLResolvers({
-      "Query.fortyTwo": ({parents, args}) => parents.map(({n}) => n + args[0])
+  it("returns a single item if the parents is null", async () => {
+    const app = scriptToExpress(`addGraphQLResolvers({
+      "Query.fortyTwo": () => 42
     })`)
     const response = await supertest(app)
       .post('/graphql-worker')
-      .send([
-        { resolver: "Query.fortyTwo", parents: [{ n: 41 }], args: [1] },
-        { resolver: "Query.fortyTwo", parents: [{ n: 42 }], args: [2] },
-      ])
+      .send(
+        { resolver: "Query.fortyTwo" },
+      )
       .set('Accept', 'application/json')
       .expect('Content-Type', /json/)
       .expect(200);
-    expect(response.body).toEqual([[42], [44]]);
+    expect(response.body).toEqual(42);
+  })
+
+  it("returns a 400 if the resolver is not registered or invalid", async () => {
+    const app = scriptToExpress(``)
+    const response = await supertest(app)
+      .post('/graphql-worker')
+      .send(
+        { resolver: "Query.notFound" },
+      )
+      .set('Accept', 'application/json')
+      .expect('Content-Type', /json/)
+      .expect(400);
+    expect(response.body).toEqual("");
   })
 })

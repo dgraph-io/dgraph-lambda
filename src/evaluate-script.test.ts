@@ -7,21 +7,14 @@ const integrationTest = process.env.INTEGRATION_TEST === "true" ? describe : des
 describe(evaluateScript, () => {
   it("returns undefined if there was no event", async () => {
     const runScript = evaluateScript("")
-    expect(await runScript({type: "Query.unknown", args: [], parents: [null]})).toBeUndefined()
+    expect(await runScript({type: "Query.unknown", args: [], parents: null})).toBeUndefined()
   })
 
-  it("returns the value if there was a resolver registered", async () => {
-    const runScript = evaluateScript(`addMultiParentGraphQLResolvers({
-      "Query.fortyTwo": ({parents}) => parents.map(() => 42)
-    })`)
-    expect(await runScript({ type: "Query.fortyTwo", args: [], parents: [null] })).toEqual([42])
-  })
-
-  it("has a convenience method to register single resolvers", async () => {
+  it("returns the value if there is a resolver registered", async () => {
     const runScript = evaluateScript(`addGraphQLResolvers({
       "Query.fortyTwo": ({parent}) => 42
     })`)
-    expect(await runScript({ type: "Query.fortyTwo", args: [], parents: [null] })).toEqual([42])
+    expect(await runScript({ type: "Query.fortyTwo", args: [], parents: null })).toEqual(42)
   })
 
   it("passes the args and parents over", async () => {
@@ -35,7 +28,7 @@ describe(evaluateScript, () => {
     const runScript = evaluateScript(`addMultiParentGraphQLResolvers({
       "Query.fortyTwo": () => [41, 42]
     })`)
-    expect(await runScript({ type: "Query.fortyTwo", args: [], parents: [null] })).toBeUndefined()
+    expect(await runScript({ type: "Query.fortyTwo", args: [], parents: null })).toBeUndefined()
   })
 
   it("returns undefined somehow the script doesn't return an array", async () => {
@@ -55,28 +48,23 @@ describe(evaluateScript, () => {
 
     it("works with dgraph graphql", async () => {
       const runScript = evaluateScript(`
-        async function todoTitles({parents, graphql}) {
-          return parents.map(async () => {
-            const results = await graphql('{ queryTodo { title } }')
-            return results.data.queryTodo.map(t => t.title)
-          })
+        async function todoTitles({graphql}) {
+          const results = await graphql('{ queryTodo { title } }')
+          return results.data.queryTodo.map(t => t.title)
         }
-        addMultiParentGraphQLResolvers({ "Query.todoTitles": todoTitles })`)
-      const results = await runScript({ type: "Query.todoTitles", args: [], parents: [null] });
-      expect(new Set(results && results[0])).toEqual(new Set(["Kick Ass", "Chew Bubblegum"]))
+        addGraphQLResolvers({ "Query.todoTitles": todoTitles })`)
+      const results = await runScript({ type: "Query.todoTitles", args: [], parents: null });
+      expect(new Set(results)).toEqual(new Set(["Kick Ass", "Chew Bubblegum"]))
     })
 
     it("works with dgraph dql", async () => {
       const runScript = evaluateScript(`
-        async function todoTitles({parents, dql}) {
-          return parents.map(async () => {
-            const results = await dql('{ queryTitles(func: type(Todo)){ Todo.title } }')
-            return results.data.queryTitles.map(t => t["Todo.title"])
-          })
+        async function todoTitles({dql}) {
+          const results = await dql('{ queryTitles(func: type(Todo)
         }
-        addMultiParentGraphQLResolvers({ "Query.todoTitles": todoTitles })`)
-      const results = await runScript({ type: "Query.todoTitles", args: [], parents: [null] });
-      expect(new Set(results && results[0])).toEqual(new Set(["Kick Ass", "Chew Bubblegum"]))
+        addGraphQLResolvers({ "Query.todoTitles": todoTitles })`)
+      const results = await runScript({ type: "Query.todoTitles", args: [], parents: null });
+      expect(new Set(results)).toEqual(new Set(["Kick Ass", "Chew Bubblegum"]))
     })
   })
 })

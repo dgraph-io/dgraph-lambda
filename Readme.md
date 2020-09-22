@@ -13,11 +13,6 @@ If the query is a root query/mutation, parents will be set to `[null]`.
 ```javascript
 const fullName = ({ parent: { firstName, lastName } }) => `${firstName} ${lastName}`
 
-function greeting({parent: {firstName}, args = [] }) {
-  const [greeting] = args;
-  return `${greeting || "Hello"} ${firstName || "World"}!`
-}
-
 async function todoTitles({ graphql }) {
   const results = await graphql('{ queryTodo { title } }')
   return results.data.queryTodo.map(t => t.title)
@@ -25,7 +20,6 @@ async function todoTitles({ graphql }) {
 
 self.addGraphQLResolvers({
   "User.fullName": fullName,
-  "User.greeting": greeting,
   "Query.todoTitles": todoTitles,
 })
 
@@ -51,9 +45,7 @@ docker run -it --rm -p 8686:8686 -v /path/to/script.js:/app/script.js -e DGRAPH_
 
 Then test it out with the following curls
 ```bash
-curl localhost:8686/graphql-worker -H "Content-Type: application/json" -d '{"resolver":"User.greeting","parents":[{"name":"Tejas"}]}'
-# Now lets send an array of queries
-curl localhost:8686/graphql-worker -H "Content-Type: application/json" -d '[{"resolver":"User.greeting","parents":[{"name":"Tejas"}]},{"resolver":"Query.todoTitles"}]'
+curl localhost:8686/graphql-worker -H "Content-Type: application/json" -d '{"resolver":"User.fullName","parents":[{"firstName":"Dgraph","lastName":"Labs"}]}'
 ```
 
 ## Environment
