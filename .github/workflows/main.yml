@@ -34,4 +34,4 @@ jobs:
 
       # Runs a single command using the runners shell
       - name: Run Tests
-        run: docker-compose run --rm -T -e NODE_ENV=test omega test
+        run: docker-compose run --rm -T -e NODE_ENV=test dgraph-lambda test

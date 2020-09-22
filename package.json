@@ -1,5 +1,5 @@
 {
-  "name": "omega",
+  "name": "dgraph-lambda",
   "version": "1.0.0",
   "description": "Serverless Framework for Dgraph",
   "main": "dist/index.js",
@@ -10,7 +10,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/dgraph-io/omega.git"
+    "url": "git+https://github.com/dgraph-io/dgraph-lambda.git"
   },
   "keywords": [
     "dgraph"
@@ -18,9 +18,9 @@
   "author": "Tejas Dinkar <tejas@gja.in>",
   "license": "Apache-2.0",
   "bugs": {
-    "url": "https://github.com/dgraph-io/omega/issues"
+    "url": "https://github.com/dgraph-io/dgraph-lambda/issues"
   },
-  "homepage": "https://github.com/dgraph-io/omega#readme",
+  "homepage": "https://github.com/dgraph-io/dgraph-lambda#readme",
   "dependencies": {
     "atob": "^2.1.2",
     "btoa": "^1.2.1",
