@@ -1,6 +1,6 @@
 # Dgraph Lambda
 
-DGraph Lambda is a serverless platform for running JS on Slash GraphQL (or Dgraph).
+Dgraph Lambda is a serverless platform for running JS on Slash GraphQL (or Dgraph).
 
 ## Running a script
 
