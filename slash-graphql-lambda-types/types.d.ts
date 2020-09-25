@@ -4,10 +4,16 @@ module "@slash-graphql/lambda-types" {
     errors?: { message: string }[]
   }
 
+  type AuthHeaderField = {
+    key: string | undefined,
+    value: string | undefined
+  }
+
   type GraphQLEventFields = {
     type: string,
     parents: (Record<string, any>)[] | null,
     args: Record<string, any>,
+    authHeader?: AuthHeaderField
   }
 
   type ResolverResponse = any[] | Promise<any>[] | Promise<any[]>;
