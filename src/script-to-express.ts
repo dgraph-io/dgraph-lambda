@@ -1,5 +1,6 @@
 import express from 'express'
 import { evaluateScript } from './evaluate-script'
+import { GraphQLEventFields } from '@slash-graphql/lambda-types'
 
 function bodyToEvent(b: any): GraphQLEventFields {
   return {

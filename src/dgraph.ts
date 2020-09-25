@@ -1,4 +1,5 @@
 import fetch from 'node-fetch';
+import { GraphQLResponse } from '@slash-graphql/lambda-types';
 
 export async function graphql(query: string, variables: Record<string, any> = {}): Promise<GraphQLResponse> {
   const response = await fetch(`${process.env.DGRAPH_URL}/graphql`, {

@@ -1,5 +1,6 @@
 import { EventTarget } from 'event-target-shim';
 import vm from 'vm';
+import { GraphQLEvent, GraphQLEventWithParent, GraphQLEventFields, ResolverResponse } from '@slash-graphql/lambda-types'
 
 import fetch, { Request, Response, Headers } from "node-fetch";
 import { URL } from "url";
@@ -14,7 +15,7 @@ function getParents(e: GraphQLEventFields): (Record<string,any>|null)[] {
 }
 
 class GraphQLResolverEventTarget extends EventTarget {
-  addMultiParentGraphQLResolvers(resolvers: {[key: string]: (e: GraphQLEvent) => (any | Promise<any>)}) {
+  addMultiParentGraphQLResolvers(resolvers: {[key: string]: (e: GraphQLEvent) => ResolverResponse}) {
     for (const [name, resolver] of Object.entries(resolvers)) {
       this.addEventListener(name, e => {
         const event = e as unknown as GraphQLEvent;
