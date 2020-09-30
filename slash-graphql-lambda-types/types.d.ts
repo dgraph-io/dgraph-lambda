@@ -21,7 +21,10 @@ module "@slash-graphql/lambda-types" {
   type GraphQLEvent = GraphQLEventFields & {
     respondWith: (r: ResolverResponse) => void,
     graphql: (s: string, vars: Record<string, any> | undefined) => Promise<GraphQLResponse>,
-    dql: (s: string, vars: Record<string, any> | undefined) => Promise<GraphQLResponse>,
+    dql: {
+      query: (s: string, vars: Record<string, any> | undefined) => Promise<GraphQLResponse>
+      mutate: (s: string) => Promise<GraphQLResponse>
+    },
   }
 
   type GraphQLEventWithParent = GraphQLEvent & {

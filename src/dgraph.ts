@@ -17,7 +17,7 @@ export async function graphql(query: string, variables: Record<string, any> = {}
   return response.json();
 }
 
-export async function dql(query: string, variables: Record<string, any> = {}): Promise<GraphQLResponse> {
+async function dqlQuery(query: string, variables: Record<string, any> = {}): Promise<GraphQLResponse> {
   const response = await fetch(`${process.env.DGRAPH_URL}/query`, {
     method: "POST",
     headers: {
@@ -30,4 +30,24 @@ export async function dql(query: string, variables: Record<string, any> = {}): P
     throw new Error("Failed to execute DQL Query")
   }
   return response.json();
+}
+
+async function dqlMutate(mutate: string): Promise<GraphQLResponse> {
+  const response = await fetch(`${process.env.DGRAPH_URL}/mutate?commitNow=true`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "pplication/rdf",
+      "X-Auth-Token": process.env.DGRAPH_TOKEN || ""
+    },
+    body: mutate
+  })
+  if (response.status !== 200) {
+    throw new Error("Failed to execute DQL Mutate")
+  }
+  return response.json();
+}
+
+export const dql = {
+  query: dqlQuery,
+  mutate: dqlMutate,
 }

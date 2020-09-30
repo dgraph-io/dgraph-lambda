@@ -12,7 +12,7 @@ self.addGraphQLResolvers({
 
 async function reallyComplexDql({ parents, dql }) {
   const ids = parents.map(p => p.id);
-  const someComplexResults = await dql(`really-complex-query-here with ${ids}`);
+  const someComplexResults = await dql.query(`really-complex-query-here with ${ids}`);
   return parents.map(parent => someComplexResults[parent.id])
 }
 
