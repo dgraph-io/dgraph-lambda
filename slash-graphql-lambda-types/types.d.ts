@@ -1,4 +1,4 @@
-module "@slash-graphql/lambda-types" {
+declare module "@slash-graphql/lambda-types" {
   type GraphQLResponse = {
     data?: Record<string, any>,
     errors?: { message: string }[]
