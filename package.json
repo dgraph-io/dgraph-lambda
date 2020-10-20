@@ -4,7 +4,7 @@
   "description": "Serverless Framework for Dgraph",
   "main": "dist/index.js",
   "scripts": {
-    "start": "node .",
+    "start": "pm2-runtime start ecosystem.config.js",
     "build": "tsc",
     "test": "jest"
   },
@@ -29,6 +29,7 @@
     "express": "^4.17.1",
     "node-fetch": "^2.6.1",
     "node-webcrypto-ossl": "^2.1.2",
+    "pm2": "^4.5.0",
     "sleep-promise": "^8.0.1"
   },
   "devDependencies": {

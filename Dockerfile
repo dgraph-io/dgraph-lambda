@@ -19,4 +19,4 @@ RUN adduser app -h /app -D
 USER app
 WORKDIR /app
 COPY --from=build --chown=app /app /app
-CMD ["node", "."]
+CMD ["npm", "start"]
