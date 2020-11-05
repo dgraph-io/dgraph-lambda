@@ -5,7 +5,7 @@ module.exports = {
       script: "./dist/index.js",
       instances: 4,
       exp_backoff_restart_delay: 100,
-      max_memory_restart: "32M",
+      max_memory_restart: "64M",
       watch: ["./script/script.js"],
       watch_options: {
         followSymlinks: false,
