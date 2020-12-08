@@ -1,4 +1,4 @@
-FROM node:12-alpine as build
+FROM node:14-alpine as build
 
 RUN apk add python make g++
 WORKDIR /app
@@ -13,7 +13,7 @@ RUN npm run build && if [[ "$nodeEnv" == "production" ]]; then mv node_modules/n
 # Used just for tests
 ENTRYPOINT [ "npm", "run" ]
 
-FROM node:12-alpine
+FROM node:14-alpine
 ENV NODE_ENV production
 RUN adduser app -h /app -D
 USER app
