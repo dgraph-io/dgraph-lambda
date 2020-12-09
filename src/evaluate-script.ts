@@ -84,7 +84,7 @@ export function evaluateScript(source: string) {
     const event = {
       ...e,
       respondWith: (x: ResolverResponse) => { retPromise = x },
-      graphql,
+      graphql: (query: string, variables: Record<string, any>) => graphql(query, variables, e.authHeader),
       dql,
     }
     target.dispatchEvent(event)
