@@ -58,7 +58,7 @@ type Query {
 
 ```bash
 # host.docker.internal may not work on old versions of docker
-docker run -it --rm -p 8686:8686 -v /path/to/script.js:/app/script.js -e DGRAPH_URL=http://host.docker.internal:8080 dgraph/dgraph-lambda
+docker run -it --rm -p 8686:8686 -v /path/to/script.js:/app/script/script.js -e DGRAPH_URL=http://host.docker.internal:8080 dgraph/dgraph-lambda
 ```
 
 Note for linux: host.docker.internal doesn't work on older versions of docker on linux. You can use `DGRAPH_URL=http://172.17.0.1:8080` instead
