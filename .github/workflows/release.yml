@@ -22,34 +22,39 @@ jobs:
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
+      - uses: docker/setup-buildx-action@v1
       - name: Get the version
         id: get_version
         run: echo ::set-output name=tag_name::${GITHUB_REF/refs\/tags\//}
+      - name: Login to DockerHub
+        uses: docker/login-action@v1 
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
       - name: Build and push Docker images
         # env:
         #   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         # You may pin to the exact commit or the version.
         # uses: docker/build-push-action@0db984c1826869dcd0740ff26ff75ff543238fd9
-        uses: docker/build-push-action@v2.2.1
+        uses: docker/build-push-action@v2
         with:
+          tags: dgraph/dgraph-lambda:${{ steps.get_version.outputs.tag_name }}
+          push: true
           # Builder instance
-#           builder: # optional
+          # builder: # optional
           # Build's context is the set of files located in the specified PATH or URL
           # context: .
           # Path to the Dockerfile
           # file: ./Dockerfile
           # List of build-time variables
-#           build-args: # optional
+          # build-args: # optional
           # List of metadata for an image
-#           labels: # optional
-          # List of tags
-          tags: dgraph/dgraph-lambda:${{ steps.get_version.outputs.tag_name }}
+          # labels: # optional
           # Sets the target stage to build
-#           target: # optional
+          # target: # optional
           # List of target platforms for build
-#           platforms: # optional
-          push: true
+          # platforms: # optional
           # List of secrets to expose to the build (eg. key=value, GIT_AUTH_TOKEN=mytoken)
-#           secrets: # optional
+          # secrets: # optional
           # GitHub Token used to authenticate against a repository for Git context
           # github-token: ${{ env.GITHUB_TOKEN }} # optional, default is ${{ github.token }}
