@@ -7,6 +7,7 @@ function bodyToEvent(b: any): GraphQLEventFields {
     type: b.resolver,
     parents: b.parents || null,
     args: b.args || {},
+    authHeader: b.authHeader,
   }
 }
 

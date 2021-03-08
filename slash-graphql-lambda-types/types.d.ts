@@ -20,7 +20,7 @@ declare module "@slash-graphql/lambda-types" {
 
   type GraphQLEvent = GraphQLEventFields & {
     respondWith: (r: ResolverResponse) => void,
-    graphql: (s: string, vars: Record<string, any> | undefined) => Promise<GraphQLResponse>,
+    graphql: (s: string, vars: Record<string, any> | undefined, ah?: AuthHeaderField) => Promise<GraphQLResponse>,
     dql: {
       query: (s: string, vars: Record<string, any> | undefined) => Promise<GraphQLResponse>
       mutate: (s: string) => Promise<GraphQLResponse>

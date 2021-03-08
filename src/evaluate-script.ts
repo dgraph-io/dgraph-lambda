@@ -1,6 +1,6 @@
 import { EventTarget } from 'event-target-shim';
 import vm from 'vm';
-import { GraphQLEvent, GraphQLEventWithParent, GraphQLEventFields, ResolverResponse } from '@slash-graphql/lambda-types'
+import { GraphQLEvent, GraphQLEventWithParent, GraphQLEventFields, ResolverResponse, AuthHeaderField } from '@slash-graphql/lambda-types'
 
 import fetch, { Request, Response, Headers } from "node-fetch";
 import { URL } from "url";
@@ -84,7 +84,7 @@ export function evaluateScript(source: string) {
     const event = {
       ...e,
       respondWith: (x: ResolverResponse) => { retPromise = x },
-      graphql: (query: string, variables: Record<string, any>) => graphql(query, variables, e.authHeader),
+      graphql: (query: string, variables: Record<string, any>, ah?: AuthHeaderField) => graphql(query, variables, ah || e.authHeader),
       dql,
     }
     target.dispatchEvent(event)

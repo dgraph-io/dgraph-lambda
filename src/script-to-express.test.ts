@@ -42,4 +42,17 @@ describe(scriptToExpress, () => {
       .expect(400);
     expect(response.body).toEqual("");
   })
+
+  it("gets the auth header as a key", async () => {
+    const app = scriptToExpress(`addGraphQLResolvers({
+      "Query.authHeader": ({authHeader}) => authHeader.key + authHeader.value
+    })`)
+    const response = await supertest(app)
+      .post('/graphql-worker')
+      .send({ resolver: "Query.authHeader", parents: [{ n: 41 }], authHeader: {key: "foo", value: "bar"} })
+      .set('Accept', 'application/json')
+      .expect('Content-Type', /json/)
+      .expect(200);
+    expect(response.body).toEqual(["foobar"]);
+  })
 })
