@@ -91,7 +91,7 @@ export function evaluateScript(source: string) {
 
   return async function(e: GraphQLEventFields): Promise<any | undefined> {
     let retPromise: ResolverResponse | undefined = undefined;
-    let event = {
+    const event = {
       ...e,
       respondWith: (x: ResolverResponse) => { retPromise = x },
       graphql: (query: string, variables: Record<string, any>, ah?: AuthHeaderField) => graphql(query, variables, ah || e.authHeader),
