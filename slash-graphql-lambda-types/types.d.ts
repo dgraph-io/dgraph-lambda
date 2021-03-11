@@ -50,25 +50,25 @@ declare module "@slash-graphql/lambda-types" {
 
   type ResolverResponse = any[] | Promise<any>[] | Promise<any[]>;
 
-  type GraphQLEvent = GraphQLEventFields & {
-    respondWith: (r: ResolverResponse) => void,
-    graphql: (s: string, vars: Record<string, any> | undefined, ah?: AuthHeaderField) => Promise<GraphQLResponse>,
+  type GraphQLEventCommonFields = {
+    type: string;    
+    respondWith: (r: ResolverResponse) => void;
+    graphql: (s: string, vars: Record<string, any> | undefined, ah?: AuthHeaderField) => Promise<GraphQLResponse>;
     dql: {
-      query: (s: string, vars: Record<string, any> | undefined) => Promise<GraphQLResponse>
-      mutate: (s: string) => Promise<GraphQLResponse>
-    },
-  }
-
-  type WebHookGraphQLEvent = {
-    respondWith: (r: ResolverResponse) => void,
-    graphql: (s: string, vars: Record<string, any> | undefined, ah?: AuthHeaderField) => Promise<GraphQLResponse>,
-    dql: {
-      query: (s: string, vars: Record<string, any> | undefined) => Promise<GraphQLResponse>
-      mutate: (s: string) => Promise<GraphQLResponse>
-    },
-    authHeader?: AuthHeaderField,
-    event?: eventPayload
-  } 
+      query: (s: string, vars: Record<string, any> | undefined) => Promise<GraphQLResponse>;
+      mutate: (s: string) => Promise<GraphQLResponse>;
+    };
+    authHeader?: AuthHeaderField;
+  };
+  
+  type GraphQLEvent = GraphQLEventCommonFields & {
+    parents: Record<string, any>[] | null;
+    args: Record<string, any>;
+  };
+  
+  type WebHookGraphQLEvent = GraphQLEventCommonFields & {
+    event?: eventPayload;
+  }; 
 
   type GraphQLEventWithParent = GraphQLEvent & {
     parent: Record<string, any> | null
