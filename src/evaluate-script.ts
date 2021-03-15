@@ -1,6 +1,6 @@
 import { EventTarget } from 'event-target-shim';
 import vm from 'vm';
-import { GraphQLEvent, GraphQLEventWithParent, GraphQLEventFields, ResolverResponse, AuthHeaderField } from '@slash-graphql/lambda-types'
+import { GraphQLEvent, GraphQLEventWithParent, GraphQLEventFields, ResolverResponse, AuthHeaderField, WebHookGraphQLEvent } from '@slash-graphql/lambda-types'
 
 import fetch, { Request, Response, Headers } from "node-fetch";
 import { URL } from "url";
@@ -29,6 +29,15 @@ class GraphQLResolverEventTarget extends EventTarget {
       this.addEventListener(name, e => {
         const event = e as unknown as GraphQLEvent;
         event.respondWith(getParents(event).map(parent => resolver({...event, parent})))
+      })
+    }
+  }
+
+  addWebHookResolvers(resolvers: { [key: string]: (e: WebHookGraphQLEvent) => (any | Promise<any>) }) {
+    for (const [name, resolver] of Object.entries(resolvers)) {
+      this.addEventListener(name, e => {
+        const event = e as unknown as WebHookGraphQLEvent;
+        event.respondWith(resolver(event))
       })
     }
   }
@@ -70,6 +79,7 @@ function newContext(eventTarget: GraphQLResolverEventTarget) {
     removeEventListener: eventTarget.removeEventListener.bind(eventTarget),
     addMultiParentGraphQLResolvers: eventTarget.addMultiParentGraphQLResolvers.bind(eventTarget),
     addGraphQLResolvers: eventTarget.addGraphQLResolvers.bind(eventTarget),
+    addWebHookResolvers: eventTarget.addWebHookResolvers.bind(eventTarget),
   });
 }
 
@@ -87,6 +97,9 @@ export function evaluateScript(source: string) {
       graphql: (query: string, variables: Record<string, any>, ah?: AuthHeaderField) => graphql(query, variables, ah || e.authHeader),
       dql,
     }
+    if (e.type === '$webhook' && e.event) {
+      event.type = `${e.event?.__typename}.${e.event?.operation}` 
+    }
     target.dispatchEvent(event)
 
     if(retPromise === undefined) {
@@ -95,7 +108,7 @@ export function evaluateScript(source: string) {
 
     const resolvedArray = await (retPromise as ResolverResponse);
     if(!Array.isArray(resolvedArray) || resolvedArray.length !== getParents(e).length) {
-      process.env.NODE_ENV != "test" && console.error(`Value returned from ${e.type} was not an array or of incorrect length`)
+      process.env.NODE_ENV != "test" && e.type !== '$webhook' && console.error(`Value returned from ${e.type} was not an array or of incorrect length`)
       return undefined
     }
 

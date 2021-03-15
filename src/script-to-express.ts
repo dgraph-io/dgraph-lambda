@@ -8,6 +8,7 @@ function bodyToEvent(b: any): GraphQLEventFields {
     parents: b.parents || null,
     args: b.args || {},
     authHeader: b.authHeader,
+    event: b.event || {},
   }
 }
 
