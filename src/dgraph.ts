@@ -32,11 +32,11 @@ async function dqlQuery(query: string, variables: Record<string, any> = {}): Pro
   return response.json();
 }
 
-async function dqlMutate(mutate: string): Promise<GraphQLResponse> {
+async function dqlMutate(mutate: string | any): Promise<GraphQLResponse> {
   const response = await fetch(`${process.env.DGRAPH_URL}/mutate?commitNow=true`, {
     method: "POST",
     headers: {
-      "Content-Type": "application/rdf",
+      "Content-Type": typeof mutate === 'object' ? "application/json" : "application/rdf",
       "X-Auth-Token": process.env.DGRAPH_TOKEN || ""
     },
     body: mutate
