@@ -1,16 +1,6 @@
 import express from 'express'
 import { evaluateScript } from './evaluate-script'
-import { GraphQLEventFields } from '@slash-graphql/lambda-types'
-
-function bodyToEvent(b: any): GraphQLEventFields {
-  return {
-    type: b.resolver,
-    parents: b.parents || null,
-    args: b.args || {},
-    authHeader: b.authHeader,
-    event: b.event || {},
-  }
-}
+import { bodyToEvent } from './body-to-event'
 
 export function scriptToExpress(source: string) {
   const runner = evaluateScript(source)

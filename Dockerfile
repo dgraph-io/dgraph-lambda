@@ -13,10 +13,16 @@ RUN npm run build && if [[ "$nodeEnv" == "production" ]]; then mv node_modules/n
 # Used just for tests
 ENTRYPOINT [ "npm", "run" ]
 
-FROM node:14-alpine
+FROM node:14-alpine as image
 ENV NODE_ENV production
 RUN adduser app -h /app -D
-USER app
 WORKDIR /app
 COPY --from=build --chown=app /app /app
+
+FROM image as fission
+ENV PORT 8888
+CMD ["node", "dist/fission.js"]
+
+FROM image as final
+USER app
 CMD ["npm", "start"]

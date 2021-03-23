@@ -90,6 +90,14 @@ You can import @slash-graph/lambda-types to get types for `addGraphQLResolver` a
 
 Currently, this uses node context to try and make sure that users aren't up to any fishy business. However, contexts aren't true security, and we should eventually switch to isolates. In the meanwhile, we will basically have kube kill this if it takes a lot of CPU for say 5 secs
 
+## Notes for working with fission
+
+Dgraph lambdas can be launched as a custom environment for fission. I'll update the notes as we go along, but here are the steps for development:
+* `docker build . --target fission -t lambda-fission`
+* `fission env create --name dg-lambda --image lambda-fission --version=2`
+* `fission function create --name hellolambda --env lambda --code script/script.js`
+* `fission httptrigger create --url /graphql-worker --method POST --function hellolambda`
+
 ## Publishing
 
 Currently, the publishing of this isn't automated. In order to publish:
