@@ -36,10 +36,10 @@ async function dqlMutate(mutate: string | Object): Promise<GraphQLResponse> {
   const response = await fetch(`${process.env.DGRAPH_URL}/mutate?commitNow=true`, {
     method: "POST",
     headers: {
-      "Content-Type": typeof mutate === 'object' ? "application/json" : "application/rdf",
+      "Content-Type": typeof mutate === 'string' ? "application/rdf" : "application/json",
       "X-Auth-Token": process.env.DGRAPH_TOKEN || ""
     },
-    body: typeof mutate === 'object' ? JSON.stringify(mutate) : mutate
+    body: typeof mutate === 'string' ? mutate : JSON.stringify(mutate)
   })
   if (response.status !== 200) {
     throw new Error("Failed to execute DQL Mutate")
