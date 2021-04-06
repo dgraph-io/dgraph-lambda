@@ -1,6 +1,12 @@
 import { parseScript } from "./fission-util";
 
 describe(parseScript, () => {
+  it("returns the map from the first line", async () => {
+    const script = `// {"dgAuth":"my-token","dgHost":"foo.us-west-2.aws.cloud.dgraph.io"}\nsomeCode()`
+    const contents = parseScript(script)
+    expect(contents).toEqual({ script: script, dgAuth: "my-token", dgHost: "foo.us-west-2.aws.cloud.dgraph.io"})
+  })
+
   it("returns an empty map if there is nothing on the first line", async () => {
     const script = ``
     const contents = parseScript(script)
@@ -23,11 +29,5 @@ describe(parseScript, () => {
     const script = `// {"foo":"bar"} junk`
     const contents = parseScript(script)
     expect(contents).toEqual({script: script})
-  })
-
-  it("returns the map from the first line", async () => {
-    const script = `// {"foo":"bar"}\nnext line`
-    const contents = parseScript(script)
-    expect(contents).toEqual({ script: script, "foo": "bar"})
   })
 })

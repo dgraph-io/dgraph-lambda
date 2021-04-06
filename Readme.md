@@ -98,6 +98,8 @@ Dgraph lambdas can be launched as a custom environment for fission. I'll update 
 * `fission function create --name hellolambda --env lambda --code script/script.js`
 * `fission httptrigger create --url /graphql-worker --method POST --function hellolambda`
 
+If the script uploaded to fission starts with a comment followed by JSON, then you can override the DGRAPH_TOKEN environment variable. See fission.test.ts for how this looks
+
 ## Publishing
 
 Currently, the publishing of this isn't automated. In order to publish:
