@@ -1,8 +1,24 @@
 import fetch from 'node-fetch';
 import { GraphQLResponse, AuthHeaderField } from '@slash-graphql/lambda-types';
 
+function getHeaders(contentType: string) {
+  const headers: Record<string, string> = {
+    "Content-Type": "application/json",
+  }
+
+  if(process.env.DGRAPH_TOKEN && process.env.DGRAPH_TOKEN != "") {
+    headers["Dg-Auth"] = process.env.DGRAPH_TOKEN
+  }
+
+  if(process.env.DGRAPH_HOST && process.env.DGRAPH_HOST != "") {
+    headers["Host"] = process.env.DGRAPH_HOST;
+  }
+
+  return headers;
+}
+
 export async function graphql(query: string, variables: Record<string, any> = {}, authHeader?: AuthHeaderField): Promise<GraphQLResponse> {
-  const headers: Record<string, string> = { "Content-Type": "application/json" };
+  const headers = getHeaders("application/json")
   if (authHeader && authHeader.key && authHeader.value) {
     headers[authHeader.key] = authHeader.value;
   }
@@ -20,10 +36,7 @@ export async function graphql(query: string, variables: Record<string, any> = {}
 async function dqlQuery(query: string, variables: Record<string, any> = {}): Promise<GraphQLResponse> {
   const response = await fetch(`${process.env.DGRAPH_URL}/query`, {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "X-Auth-Token": process.env.DGRAPH_TOKEN || ""
-    },
+    headers: getHeaders("application/json"),
     body: JSON.stringify({ query, variables })
   })
   if (response.status !== 200) {
@@ -35,10 +48,7 @@ async function dqlQuery(query: string, variables: Record<string, any> = {}): Pro
 async function dqlMutate(mutate: string): Promise<GraphQLResponse> {
   const response = await fetch(`${process.env.DGRAPH_URL}/mutate?commitNow=true`, {
     method: "POST",
-    headers: {
-      "Content-Type": "application/rdf",
-      "X-Auth-Token": process.env.DGRAPH_TOKEN || ""
-    },
+    headers: getHeaders("application/rdf"),
     body: mutate
   })
   if (response.status !== 200) {
