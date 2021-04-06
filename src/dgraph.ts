@@ -10,6 +10,11 @@ function getHeaders(contentType: string) {
     headers["Dg-Auth"] = process.env.DGRAPH_TOKEN
   }
 
+  // This relies on a sneaky use of node-fetch. If you pass in
+  // https://host1.com/url and pass Host: host2.net
+  // Then node fetch will connect to host1.com, and verify SSL of host2.net,
+  // and finally get host2.net/url
+  // Cloud uses this by connecting to mutant over the internal network
   if(process.env.DGRAPH_HOST && process.env.DGRAPH_HOST != "") {
     headers["Host"] = process.env.DGRAPH_HOST;
   }
