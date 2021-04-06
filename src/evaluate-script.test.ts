@@ -38,6 +38,20 @@ describe(evaluateScript, () => {
     expect(await runScript({ type: "User.fortyTwo", args: {}, parents: [{n: 42}] })).toBeUndefined()
   })
 
+  it("passes exposed environment variables to script", async () => {
+    const runScript = evaluateScript(`addGraphQLResolvers({
+      "Query.envVar": () => process.env.EXPOSED_VAR
+    })`)
+    expect(await runScript({ type: "Query.envVar", args: {}, parents: null })).toEqual('works')
+  })
+
+  it("filters out environment variables that haven't been exposed to script", async () => {
+    const runScript = evaluateScript(`addGraphQLResolvers({
+      "Query.envVar": () => process.env.SOME_VAR
+    })`)
+    expect(await runScript({ type: "Query.envVar", args: {}, parents: null })).toBeUndefined()
+  })
+
   integrationTest("dgraph integration", () => {
     beforeAll(async () => {
       await waitForDgraph();

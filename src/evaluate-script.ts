@@ -44,6 +44,13 @@ class GraphQLResolverEventTarget extends EventTarget {
 }
 
 function newContext(eventTarget: GraphQLResolverEventTarget) {
+  const env = {} as Record<string, string | undefined>
+  Object.entries(process.env).forEach(([key, value]) => {
+    if (key.startsWith('EXPOSED_')) {
+      env[key] = value
+    }
+  })
+
   return vm.createContext({
     // From fetch
     fetch,
@@ -80,6 +87,9 @@ function newContext(eventTarget: GraphQLResolverEventTarget) {
     addMultiParentGraphQLResolvers: eventTarget.addMultiParentGraphQLResolvers.bind(eventTarget),
     addGraphQLResolvers: eventTarget.addGraphQLResolvers.bind(eventTarget),
     addWebHookResolvers: eventTarget.addWebHookResolvers.bind(eventTarget),
+
+    // Environment
+    process: { env },
   });
 }
 
