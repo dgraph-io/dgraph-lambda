@@ -3,7 +3,7 @@ import { GraphQLResponse, AuthHeaderField } from '@slash-graphql/lambda-types';
 
 function getHeaders(contentType: string) {
   const headers: Record<string, string> = {
-    "Content-Type": "application/json",
+    "Content-Type": contentType,
   }
 
   if(process.env.DGRAPH_TOKEN && process.env.DGRAPH_TOKEN != "") {

@@ -95,7 +95,7 @@ Currently, this uses node context to try and make sure that users aren't up to a
 Dgraph lambdas can be launched as a custom environment for fission. I'll update the notes as we go along, but here are the steps for development:
 * `docker build . --target fission -t lambda-fission`
 * `fission env create --name dg-lambda --image lambda-fission --version=2`
-* `fission function create --name hellolambda --env lambda --code script/script.js`
+* `fission function create --name hellolambda --env dg-lambda --code script/script.js`
 * `fission httptrigger create --url /graphql-worker --method POST --function hellolambda`
 
 If the script uploaded to fission starts with a comment followed by JSON, then you can override the DGRAPH_TOKEN environment variable. See fission.test.ts for how this looks
@@ -105,3 +105,5 @@ If the script uploaded to fission starts with a comment followed by JSON, then y
 Currently, the publishing of this isn't automated. In order to publish:
 * Publish the types in slash-graphql-lambda-types if needed with (npm version minor; npm publish)
 * The docker-image auto publishes, but pushing a tag will create a tagged version that is more stable
+  * docker build . -t dgraph/dgraph-lambda:v0.0.1
+  * docker push dgraph/dgraph-lambda:v0.0.1
