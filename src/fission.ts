@@ -33,6 +33,7 @@ export function startFission(port: string) {
       }
       if(dgHost) {
         process.env.DGRAPH_HOST = dgHost
+        process.env.DGRAPH_URL = "https://"+dgHost
       }
       lambdaScript = evaluateScript(script)
       res.status(202).send();
