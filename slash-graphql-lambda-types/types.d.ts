@@ -9,6 +9,27 @@ declare module "@slash-graphql/lambda-types" {
     value: string | undefined
   }
 
+  type InfoField = {
+    field: selectionField 
+  }
+
+  type selectionField = {
+    alias: string,
+    name: string,
+    arguments: Record<string, any>,
+    directives: fldDirectiveList,
+    selectionSet: selectionSet
+  }
+
+  type selectionSet = Array<selectionField>
+
+  type fldDirectiveList = Array<fldDirective>
+
+  type fldDirective = {
+    name: string,
+    arguments: Record<string, any>
+  }
+
   type eventPayload = {
     __typename: string,
     operation: string,
@@ -45,7 +66,8 @@ declare module "@slash-graphql/lambda-types" {
     parents: (Record<string, any>)[] | null,
     args: Record<string, any>,
     authHeader?: AuthHeaderField,
-    event?: eventPayload
+    event?: eventPayload,
+    info?: InfoField
   }
 
   type ResolverResponse = any[] | Promise<any>[] | Promise<any[]>;
@@ -64,6 +86,7 @@ declare module "@slash-graphql/lambda-types" {
   type GraphQLEvent = GraphQLEventCommonFields & {
     parents: Record<string, any>[] | null;
     args: Record<string, any>;
+    info: InfoField;
   };
   
   type WebHookGraphQLEvent = GraphQLEventCommonFields & {
