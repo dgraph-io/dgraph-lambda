@@ -9,6 +9,7 @@ function bodyToEvent(b: any): GraphQLEventFields {
     args: b.args || {},
     authHeader: b.authHeader,
     event: b.event || {},
+    info: b.info || null,
   }
 }
 
@@ -19,7 +20,7 @@ export function scriptToExpress(source: string) {
   app.post("/graphql-worker", async (req, res, next) => {
     try {
       const result = await runner(bodyToEvent(req.body));
-      if(result === undefined) {
+      if(result === undefined && req.body.resolver !== '$webhook') {
         res.status(400)
       }
       res.json(result)
