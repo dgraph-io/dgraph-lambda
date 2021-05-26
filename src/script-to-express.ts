@@ -20,11 +20,8 @@ export function scriptToExpress(source: string) {
   app.post("/graphql-worker", async (req, res, next) => {
     try {
       const result = await runner(bodyToEvent(req.body));
-      if(result === undefined) {
+      if(result === undefined && req.body.resolver !== '$webhook') {
         res.status(400)
-        if(req.body.resolver === '$webhook') {
-          res.status(200)
-        }
       }
       res.json(result)
     } catch(e) {
