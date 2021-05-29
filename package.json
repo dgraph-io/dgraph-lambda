@@ -6,7 +6,7 @@
   "scripts": {
     "start": "pm2-runtime start ecosystem.config.js",
     "build": "tsc",
-    "test": "jest"
+    "test": "cross-env EXPOSED_VAR=works SOME_VAR=1 jest"
   },
   "repository": {
     "type": "git",
@@ -39,6 +39,7 @@
     "@types/jest": "^26.0.14",
     "@types/node-fetch": "^2.5.7",
     "@types/supertest": "^2.0.10",
+    "cross-env": "^7.0.3",
     "jest": "^26.4.2",
     "supertest": "^4.0.2",
     "ts-jest": "^26.3.0",
