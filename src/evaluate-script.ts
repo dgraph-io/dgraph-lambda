@@ -61,6 +61,7 @@ function newContext(eventTarget: GraphQLResolverEventTarget) {
 
     // Crypto
     crypto: new Crypto(),
+    Uint8Array,
     TextDecoder,
     TextEncoder,
 
