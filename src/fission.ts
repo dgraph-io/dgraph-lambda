@@ -27,10 +27,15 @@ export function startFission(port: string) {
     }
 
     try {
-      const {script, dgAuth, dgHost} = parseScript(fs.readFileSync(req.body.filepath).toString())
+      const {script, dgAuth, dgHost, accessToken} = parseScript(fs.readFileSync(req.body.filepath).toString())
       if(dgAuth) {
         process.env.DGRAPH_TOKEN = dgAuth
       }
+
+      if(accessToken) {
+        process.env.DGRAPH_ACCESS_TOKEN = accessToken
+      }
+
       if(dgHost) {
         process.env.DGRAPH_HOST = dgHost
         process.env.DGRAPH_URL = "https://"+dgHost

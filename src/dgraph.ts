@@ -10,6 +10,10 @@ function getHeaders(contentType: string) {
     headers["Dg-Auth"] = process.env.DGRAPH_TOKEN
   }
 
+  if(process.env.DGRAPH_ACCESS_TOKEN && process.env.DGRAPH_ACCESS_TOKEN !=  "") {
+    headers["X-Dgraph-AccessToken"] = process.env.DGRAPH_ACCESS_TOKEN
+  }
+
   // This relies on a sneaky use of node-fetch. If you pass in
   // https://host1.com/url and pass Host: host2.net
   // Then node fetch will connect to host1.com, and verify SSL of host2.net,
