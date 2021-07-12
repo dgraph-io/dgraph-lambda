@@ -2,7 +2,8 @@ import express from 'express'
 import { evaluateScript } from './evaluate-script'
 import { GraphQLEventFields } from '@slash-graphql/lambda-types'
 
-function bodyToEvent(b: any): GraphQLEventFields {
+export function bodyToEvent(b: any): GraphQLEventFields {
+  console.log(b)
   return {
     type: b.resolver,
     parents: b.parents || null,
@@ -14,19 +15,6 @@ function bodyToEvent(b: any): GraphQLEventFields {
 }
 
 export function scriptToExpress(source: string) {
-  const runner = evaluateScript(source)
-  const app = express()
-  app.use(express.json({limit: '32mb'}))
-  app.post("/graphql-worker", async (req, res, next) => {
-    try {
-      const result = await runner(bodyToEvent(req.body));
-      if(result === undefined && req.body.resolver !== '$webhook') {
-        res.status(400)
-      }
-      res.json(result)
-    } catch(e) {
-      next(e)
-    }
-  })
-  return app;
+  // const runner = evaluateScript(source)
+  // return runner;
 }
