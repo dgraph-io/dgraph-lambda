@@ -1,9 +1,8 @@
-import express from 'express'
-import { evaluateScript } from './evaluate-script'
+import atob from "atob";
+import btoa from "btoa";
 import { GraphQLEventFields } from '@slash-graphql/lambda-types'
 
 export function bodyToEvent(b: any): GraphQLEventFields {
-  console.log(b)
   return {
     type: b.resolver,
     parents: b.parents || null,
@@ -14,7 +13,13 @@ export function bodyToEvent(b: any): GraphQLEventFields {
   }
 }
 
-export function scriptToExpress(source: string) {
-  // const runner = evaluateScript(source)
-  // return runner;
+export function base64Decode(str: string) {
+  try {
+    const original = str.trim();
+    const decoded = atob(original);
+    return btoa(decoded) === original ? decoded : "";
+  } catch (err) {
+    console.error(err);
+    return "";
+  }
 }
