@@ -1,4 +1,4 @@
-import { buildApp } from "./index";
+import { buildApp } from "./buildApp";
 import supertest from 'supertest'
 
 describe(buildApp, () => {
