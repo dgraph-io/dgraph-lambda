@@ -31,15 +31,19 @@ export function buildApp() {
     app.use(express.json({limit: '32mb'}))
     app.post("/graphql-worker", async (req, res, next) => {
         try {
-        const source = base64Decode(req.body.source) || req.body.source
-        const runner = evaluateScript(source)
-        const result = await runner(bodyToEvent(req.body));
-        if(result === undefined && req.body.resolver !== '$webhook') {
-            res.status(400)
-        }
-        res.json(result)
+          const source = base64Decode(req.body.source) || req.body.source
+          const namespace = req.body.namespace || "0"
+          const runner = evaluateScript(source, namespace)
+          const result = await runner(bodyToEvent(req.body));
+          if(result === undefined && req.body.resolver !== '$webhook') {
+              res.status(400)
+          }
+          res.json(result)
         } catch(err) {
-        next(err)
+          if(err.message.includes("Script execution timed out")) {
+            res.json({"error": err.message})
+          }
+          next(err)
         }
     })
     return app;
