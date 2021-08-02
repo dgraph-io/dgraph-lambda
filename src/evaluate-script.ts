@@ -109,7 +109,6 @@ export function evaluateScript(source: string, namespace: string) {
   // threads being started, which have a non-zero performance overhead.
   // Ref: https://nodejs.org/api/vm.html#vm_script_runincontext_contextifiedobject_options
   script.runInContext(context, {timeout:10000}); // timeout after 10 seconds
-
   return async function(e: GraphQLEventFields): Promise<any | undefined> {
     let retPromise: ResolverResponse | undefined = undefined;
     const event = {
