@@ -26,6 +26,8 @@ function base64Decode(str: string) {
   }
 }
 
+var scripts = new Map();
+
 export function buildApp() {
     const app = express();
     app.use(express.json({limit: '32mb'}))
@@ -33,7 +35,10 @@ export function buildApp() {
         try {
           const source = base64Decode(req.body.source) || req.body.source
           const namespace = req.body.namespace || "0"
-          const runner = evaluateScript(source, namespace)
+          if (!scripts.has(source)) {
+            scripts.set(source, evaluateScript(source, namespace))
+          }
+          const runner = scripts.get(source)
           const result = await runner(bodyToEvent(req.body));
           if(result === undefined && req.body.resolver !== '$webhook') {
               res.status(400)

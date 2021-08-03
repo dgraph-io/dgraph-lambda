@@ -56,11 +56,12 @@ function appendPrefix(fn: (message?: any, ...optionalParams: any[]) => void, pre
 
 function newContext(eventTarget: GraphQLResolverEventTarget, logPrefix: string) {
   // Override the console object to append prefix in front.
-  console.debug = appendPrefix(console.debug, logPrefix)
-  console.error = appendPrefix(console.error, logPrefix)
-  console.info = appendPrefix(console.info, logPrefix)
-  console.log = appendPrefix(console.log, logPrefix)
-  console.warn = appendPrefix(console.warn, logPrefix)
+  const customConsole = Object.assign({}, console)
+  customConsole.debug = appendPrefix(customConsole.debug, logPrefix)
+  customConsole.error = appendPrefix(customConsole.error, logPrefix)
+  customConsole.info = appendPrefix(customConsole.info, logPrefix)
+  customConsole.log = appendPrefix(customConsole.log, logPrefix)
+  customConsole.warn = appendPrefix(customConsole.warn, logPrefix)
 
   return vm.createContext({
     // From fetch
@@ -83,7 +84,7 @@ function newContext(eventTarget: GraphQLResolverEventTarget, logPrefix: string) 
     TextEncoder,
 
     // Debugging
-    console,
+    console:customConsole,
 
     // Async
     setTimeout,
