@@ -30,7 +30,7 @@ var scripts = new Map();
 
 async function execute(body: any, res: any) {
   try {
-    console.log(body)
+    // console.log(body)
     const source = base64Decode(body.source) || body.source
     const namespace = body.namespace || "0"
     if(scripts.has(source)){
@@ -46,6 +46,8 @@ async function execute(body: any, res: any) {
     const runner = evaluateScript(source, namespace)
     scripts.set(source, runner)
     const result = await runner(bodyToEvent(body));
+
+    console.log("Result", result)
     if(result === undefined && body.resolver !== '$webhook') {
         res.status(400)
     }

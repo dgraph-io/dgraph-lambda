@@ -56,11 +56,11 @@ function appendPrefix(fn: (message?: any, ...optionalParams: any[]) => void, pre
 
 function newContext(eventTarget: GraphQLResolverEventTarget, logPrefix: string) {
   // Override the console object to append prefix in front.
-  console.debug = appendPrefix(console.debug, logPrefix)
-  console.error = appendPrefix(console.error, logPrefix)
-  console.info = appendPrefix(console.info, logPrefix)
-  console.log = appendPrefix(console.log, logPrefix)
-  console.warn = appendPrefix(console.warn, logPrefix)
+  // console.debug = appendPrefix(console.debug, logPrefix)
+  // console.error = appendPrefix(console.error, logPrefix)
+  // console.info = appendPrefix(console.info, logPrefix)
+  // console.log = appendPrefix(console.log, logPrefix)
+  // console.warn = appendPrefix(console.warn, logPrefix)
 
   return vm.createContext({
     // From fetch
@@ -117,16 +117,19 @@ export function evaluateScript(source: string, namespace: string) {
       graphql: (query: string, variables: Record<string, any>, ah?: AuthHeaderField) => graphql(query, variables, ah || e.authHeader),
       dql,
     }
+    console.log(event)
     if (e.type === '$webhook' && e.event) {
       event.type = `${e.event?.__typename}.${e.event?.operation}` 
     }
-    target.dispatchEvent(event)
+    console.log(target.dispatchEvent(event))
 
     if(retPromise === undefined) {
+      console.log("undefined promise")
       return undefined
     }
 
     const resolvedArray = await (retPromise as ResolverResponse);
+    // console.log(resolvedArray)
     if(!Array.isArray(resolvedArray) || resolvedArray.length !== getParents(e).length) {
       process.env.NODE_ENV != "test" && e.type !== '$webhook' && console.error(`Value returned from ${e.type} was not an array or of incorrect length`)
       return undefined
