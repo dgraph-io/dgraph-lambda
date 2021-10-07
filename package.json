@@ -6,7 +6,7 @@
   "scripts": {
     "start": "pm2-runtime start ecosystem.config.js",
     "build": "tsc",
-    "test": "jest"
+    "test": "jest --clearCache && jest"
   },
   "repository": {
     "type": "git",
