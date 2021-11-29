@@ -1,6 +1,6 @@
 FROM node:14-alpine as build
 
-RUN apk add python make g++
+RUN apk add python3 make g++
 WORKDIR /app
 COPY package.json package-lock.json ./
 RUN npm install
