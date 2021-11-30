@@ -84,7 +84,7 @@ If you would like to add libraries, then use webpack --target=webworker to compi
 
 ### Working with Typescript
 
-You can import @slash-graph/lambda-types to get types for `addGraphQLResolver` and `addGraphQLMultiParentResolver`.
+You can import `@slash-graphql/lambda-types` to get types for `addGraphQLResolver` and `addGraphQLMultiParentResolver`.
 
 ## Security
 

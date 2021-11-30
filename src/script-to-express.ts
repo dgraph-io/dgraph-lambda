@@ -1,6 +1,17 @@
 import express from 'express'
 import { evaluateScript } from './evaluate-script'
-import { bodyToEvent } from './body-to-event'
+import { GraphQLEventFields } from '@slash-graphql/lambda-types'
+
+function bodyToEvent(b: any): GraphQLEventFields {
+  return {
+    type: b.resolver,
+    parents: b.parents || null,
+    args: b.args || {},
+    authHeader: b.authHeader,
+    event: b.event || {},
+    info: b.info || null,
+  }
+}
 
 export function scriptToExpress(source: string) {
   const runner = evaluateScript(source)
@@ -9,7 +20,7 @@ export function scriptToExpress(source: string) {
   app.post("cluster/:ns/graphql-worker", async (req, res, next) => {
     try {
       const result = await runner(bodyToEvent(req.body));
-      if(result === undefined) {
+      if(result === undefined && req.body.resolver !== '$webhook') {
         res.status(400)
       }
       res.json(result)
