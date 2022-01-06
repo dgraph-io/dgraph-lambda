@@ -43,7 +43,26 @@ class GraphQLResolverEventTarget extends EventTarget {
   }
 }
 
-function newContext(eventTarget: GraphQLResolverEventTarget) {
+function appendPrefix(fn: (message?: any, ...optionalParams: any[]) => void, prefix: string){
+  return function() {
+    // 1. Convert args to a normal array
+    var args = Array.from(arguments);
+    // 2. Prepend log prefix log string
+    args.unshift(prefix + ": ");
+    // 3. Pass along arguments to console.log
+    fn.apply(console, args);
+  }
+}
+
+function newContext(eventTarget: GraphQLResolverEventTarget, logPrefix: string) {
+  // Override the console object to append prefix in front.
+  const customConsole = Object.assign({}, console)
+  customConsole.debug = appendPrefix(customConsole.debug, logPrefix)
+  customConsole.error = appendPrefix(customConsole.error, logPrefix)
+  customConsole.info = appendPrefix(customConsole.info, logPrefix)
+  customConsole.log = appendPrefix(customConsole.log, logPrefix)
+  customConsole.warn = appendPrefix(customConsole.warn, logPrefix)
+
   return vm.createContext({
     // From fetch
     fetch,
@@ -65,7 +84,7 @@ function newContext(eventTarget: GraphQLResolverEventTarget) {
     TextEncoder,
 
     // Debugging
-    console,
+    console:customConsole,
 
     // Async
     setTimeout,
@@ -83,11 +102,14 @@ function newContext(eventTarget: GraphQLResolverEventTarget) {
   });
 }
 
-export function evaluateScript(source: string) {
+export function evaluateScript(source: string, namespace: string) {
   const script = new vm.Script(source)
   const target = new GraphQLResolverEventTarget();
-  const context = newContext(target)
-  script.runInContext(context);
+  const context = newContext(target, "Namespace " + namespace)
+  // Using the timeout or breakOnSigint options will result in new event loops and corresponding
+  // threads being started, which have a non-zero performance overhead.
+  // Ref: https://nodejs.org/api/vm.html#vm_script_runincontext_contextifiedobject_options
+  script.runInContext(context, {timeout:10000}); // timeout after 10 seconds
 
   return async function(e: GraphQLEventFields): Promise<any | undefined> {
     let retPromise: ResolverResponse | undefined = undefined;
