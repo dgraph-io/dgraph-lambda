@@ -8,6 +8,7 @@ import atob from "atob";
 import btoa from "btoa";
 import { TextDecoder, TextEncoder } from "util";
 import { Crypto } from "node-webcrypto-ossl";
+import { CryptoKey } from "webcrypto-core"
 import { graphql, dql } from './dgraph';
 
 function getParents(e: GraphQLEventFields): (Record<string,any>|null)[] {
@@ -63,6 +64,7 @@ function newContext(eventTarget: GraphQLResolverEventTarget) {
     crypto: new Crypto(),
     TextDecoder,
     TextEncoder,
+    CryptoKey,
 
     // Debugging
     console,
