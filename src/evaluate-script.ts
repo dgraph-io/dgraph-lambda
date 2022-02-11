@@ -77,6 +77,7 @@ function newContext(eventTarget: GraphQLResolverEventTarget) {
     self: eventTarget,
     addEventListener: eventTarget.addEventListener.bind(eventTarget),
     removeEventListener: eventTarget.removeEventListener.bind(eventTarget),
+
     addMultiParentGraphQLResolvers: eventTarget.addMultiParentGraphQLResolvers.bind(eventTarget),
     addGraphQLResolvers: eventTarget.addGraphQLResolvers.bind(eventTarget),
     addWebHookResolvers: eventTarget.addWebHookResolvers.bind(eventTarget),
@@ -98,7 +99,7 @@ export function evaluateScript(source: string) {
       dql,
     }
     if (e.type === '$webhook' && e.event) {
-      event.type = `${e.event?.__typename}.${e.event?.operation}` 
+      event.type = `${e.event?.__typename}.${e.event?.operation}`
     }
     target.dispatchEvent(event)
 

@@ -15,14 +15,13 @@ function base64Decode(str: string) {
   }
 }
 
-async function startServer() {
+async function startServer(port: string) {
   const source = (
     await fs.promises.readFile(process.env.SCRIPT_PATH || "./script/script.js")
   ).toString();
   const script = base64Decode(source) || source;
 
   const app = scriptToExpress(script);
-  const port = process.env.PORT || "8686";
   const server = app.listen(port, () =>
     console.log("Server Listening on port " + port + "!")
   );
@@ -34,4 +33,4 @@ async function startServer() {
   });
 }
 
-startServer();
+startServer(process.env.PORT || "8686");
