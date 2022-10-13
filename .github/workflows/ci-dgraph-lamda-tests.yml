@@ -1,0 +1,23 @@
+name: ci-dgraph-lambda-tests
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  schedule:
+    - cron: "0 * * * *"
+jobs:
+  dgraph-tests:
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+      - name: Run Tests
+        run: |
+          #!/bin/bash
+          docker-compose run --rm -T -e NODE_ENV=test dgraph-lambda test
