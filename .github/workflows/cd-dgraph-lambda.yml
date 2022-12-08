@@ -24,7 +24,12 @@ jobs:
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_PASSWORD_TOKEN }}
-      - name: Push dgraph-lambda images
+      - name: Install linux dependencies
+        run: |
+          #!/bin/bash
+          apt-get update -y 
+          apt-get install qemu qemu-user-static binfmt-support debootstrap -y          
+      - name: Build and push dgraph-lambda images
         run: |
           docker buildx create --name builder --driver docker-container
           docker buildx use builder
