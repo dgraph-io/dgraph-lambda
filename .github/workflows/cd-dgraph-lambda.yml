@@ -28,4 +28,4 @@ jobs:
         run: |
           docker buildx create --name builder --driver docker-container
           docker buildx use builder
-          docker buildx build -t dgraph/dgraph-lambda:1.4.0 --push --platform=linux/arm64,linux/amd64 .
+          docker buildx build -t dgraph/dgraph-lambda:${{ env.DGRAPH_LAMBDA_RELEASE_VERSION }} --push --platform=linux/arm64,linux/amd64 .
