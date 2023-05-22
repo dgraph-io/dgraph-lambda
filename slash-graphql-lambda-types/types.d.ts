@@ -67,7 +67,8 @@ declare module "@slash-graphql/lambda-types" {
     args: Record<string, any>,
     authHeader?: AuthHeaderField,
     event?: eventPayload,
-    info?: InfoField
+    info?: InfoField,
+    accessJWT?: string
   }
 
   type ResolverResponse = any[] | Promise<any>[] | Promise<any[]>;

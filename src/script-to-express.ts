@@ -10,6 +10,7 @@ function bodyToEvent(b: any): GraphQLEventFields {
     authHeader: b.authHeader,
     event: b.event || {},
     info: b.info || null,
+    accessJWT: b["X-Dgraph-AccessToken"]
   }
 }
 

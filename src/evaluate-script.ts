@@ -94,8 +94,8 @@ export function evaluateScript(source: string) {
     const event = {
       ...e,
       respondWith: (x: ResolverResponse) => { retPromise = x },
-      graphql: (query: string, variables: Record<string, any>, ah?: AuthHeaderField) => graphql(query, variables, ah || e.authHeader),
-      dql,
+      graphql: (query: string, variables: Record<string, any>, ah?: AuthHeaderField) => graphql(query, variables, ah || e.authHeader,e.accessJWT),
+      dql: new dql(e.accessJWT),
     }
     if (e.type === '$webhook' && e.event) {
       event.type = `${e.event?.__typename}.${e.event?.operation}` 
