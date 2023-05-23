@@ -20,3 +20,4 @@ module.exports = {
     },
   ],
 };
+// add the option       node_args: ["--inspect"], to enable debugging.
