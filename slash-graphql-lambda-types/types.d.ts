@@ -60,7 +60,15 @@ declare module "@slash-graphql/lambda-types" {
       rootUIDs: Array<any>
     } 
   }
-
+  // body structure of Alpha request
+  // autHeader contains the key and value of the header used in GraphQL authorization
+  // the auth key is sepcified in Dgraph.Authorization in the graphql schema
+  // accessJWT is the optional user token, obtain after login to a tenant
+  // accessJWT is used by lambda to call back the /graphq /query or /mutate endpoints 
+  // accessJWT can also be decoded by the lambda code to get user id and namespace
+  //    let payload=JSON.parse(atob(accessJWT.split('.')[1]))
+  // type is $webhook for webhook calls.
+   
   type GraphQLEventFields = {
     type: string,
     parents: (Record<string, any>)[] | null,
