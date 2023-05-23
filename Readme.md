@@ -36,37 +36,35 @@ self.addMultiParentGraphQLResolvers({
 
 ## Running Locally
 
-First launch dgraph and load it with the todo schema (and add a todo or two).
-
-```graphql
-type User {
-   id: ID!
-   firstName: String!
-   lastName: String!
-   fullName: String @lambda
-}
-
-type Todo {
-   id: ID!
-   title: String
-}
-
-type Query {
-  todoTitles: [String] @lambda
-}
+Create a "local-lambda" docker image
+``` 
+docker build -t local-lambda .
 ```
-
-```bash
-# host.docker.internal may not work on old versions of docker
-docker run -it --rm -p 8686:8686 -v /path/to/script.js:/app/script/script.js -e DGRAPH_URL=http://host.docker.internal:8080 dgraph/dgraph-lambda
+###  option 1 - run the lambda server alone with
 ```
+docker run -d -p 8686:8686 local-lambda
+```
+You can perform a basic test using curl:
 
-Note for linux: host.docker.internal doesn't work on older versions of docker on linux. You can use `DGRAPH_URL=http://172.17.0.1:8080` instead
-
-Then test it out with the following curls
 ```bash
 curl localhost:8686/graphql-worker -H "Content-Type: application/json" -d '{"resolver":"User.fullName","parents":[{"firstName":"Dgraph","lastName":"Labs"}]}'
 ```
+
+### option 2 - use one of the scripts in dgraph/contrib/local-test
+
+- change the lambda image used in the script to use local-lambda for your tests
+- check the script you want to load. To run the lambda jest, load the script provided in this repo.
+
+For testing, update exosystem.config.js
+
+- add node_args: ["--inspect"], to enable debugging.
+- set instances to 1, to be sure that the port 9230 will be on the only instance your are testing.
+
+in VS code, attach to the docker container, and then launch the debug confugration "Attach to Process"
+
+
+
+
 
 ## Environment
 
