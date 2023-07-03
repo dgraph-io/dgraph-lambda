@@ -7,7 +7,7 @@ import { URL } from "url";
 import atob from "atob";
 import btoa from "btoa";
 import { TextDecoder, TextEncoder } from "util";
-import { Crypto } from "node-webcrypto-ossl";
+const crypto = require('crypto');
 import { graphql, dql } from './dgraph';
 
 function getParents(e: GraphQLEventFields): (Record<string,any>|null)[] {
@@ -60,7 +60,7 @@ function newContext(eventTarget: GraphQLResolverEventTarget) {
     btoa,
 
     // Crypto
-    crypto: new Crypto(),
+    crypto,
     TextDecoder,
     TextEncoder,
 
