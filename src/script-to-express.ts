@@ -14,11 +14,10 @@ function bodyToEvent(b: any): GraphQLEventFields {
   }
 }
 
-export function scriptToExpress(source: string) {
+export function scriptToExpress(app: express.Application, path: string, source: string) {
   const runner = evaluateScript(source)
-  const app = express()
-  app.use(express.json({limit: '32mb'}))
-  app.post("/graphql-worker", async (req, res, next) => {
+  console.log("Adding script to path " + path );
+  app.post(path, async (req, res, next) => {
     try {
       const result = await runner(bodyToEvent(req.body));
       if(result === undefined && req.body.resolver !== '$webhook') {
@@ -29,5 +28,5 @@ export function scriptToExpress(source: string) {
       next(e)
     }
   })
-  return app;
+
 }

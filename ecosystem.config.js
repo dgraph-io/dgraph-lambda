@@ -3,10 +3,11 @@ module.exports = {
     {
       name: "dgraph-lambda",
       script: "./dist/index.js",
-      instances: Number(process.env.INSTANCES || 4),
+      instances: Number(process.env.INSTANCES || 1),
       exp_backoff_restart_delay: 100,
       max_memory_restart: process.env.MAX_MEMORY_LIMIT || "64M",
-      watch: ["./script/script.js"],
+      watch: ["./script"],
+      node_args: ["--inspect"],
       watch_options: {
         followSymlinks: false,
       },

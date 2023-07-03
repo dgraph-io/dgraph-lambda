@@ -1,9 +1,11 @@
 import { scriptToExpress } from "./script-to-express";
-import supertest from 'supertest'
+import supertest from 'supertest';
+import express from 'express';
 
 describe(scriptToExpress, () => {
   it("calls the appropriate function, passing the resolver, parent and args", async () => {
-    const app = scriptToExpress(`addMultiParentGraphQLResolvers({
+    const app = express()
+    scriptToExpress(app,"/graphql-worker",`addMultiParentGraphQLResolvers({
       "Query.fortyTwo": ({parents, args}) => parents.map(({n}) => n + args.foo)
     })`)
     const response = await supertest(app)
@@ -16,7 +18,8 @@ describe(scriptToExpress, () => {
   })
 
   it("returns a single item if the parents is null", async () => {
-    const app = scriptToExpress(`addGraphQLResolvers({
+    const app = express()
+    scriptToExpress(app,"/graphql-worker",`addGraphQLResolvers({
       "Query.fortyTwo": () => 42
     })`)
     const response = await supertest(app)
@@ -31,7 +34,8 @@ describe(scriptToExpress, () => {
   })
 
   it("returns a 400 if the resolver is not registered or invalid", async () => {
-    const app = scriptToExpress(``)
+    const app = express()
+    scriptToExpress(app,"/graphql-worker",``)
     const response = await supertest(app)
       .post('/graphql-worker')
       .send(
@@ -44,7 +48,8 @@ describe(scriptToExpress, () => {
   })
 
   it("gets the auth header as a key", async () => {
-    const app = scriptToExpress(`addGraphQLResolvers({
+    const app = express()
+    scriptToExpress(app,"/graphql-worker",`addGraphQLResolvers({
       "Query.authHeader": ({authHeader}) => authHeader.key + authHeader.value
     })`)
     const response = await supertest(app)
