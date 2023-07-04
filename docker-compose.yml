@@ -1,24 +1,23 @@
 version: '3.4'
 services:
-  dgraph-lambda:
+  lambda:
     build:
       context: .
-      target: build
       args:
         nodeEnv: development
+    volumes:
+      - ./script/script.js:/app/script/script.js:ro
     environment:
-      DGRAPH_URL: http://dgraph:8080
-      INTEGRATION_TEST: "true"
+      - DGRAPH_URL=http://host.docker.internal:8080
+      - MAX_MEMORY_LIMIT=256M
     ports:
-      - "8686:8686"
+      - 8686:8686
     depends_on:
       - alpha
   # Dgraph Zero controls the cluster
   zero:
     image: dgraph/dgraph:latest
     container_name: lambda_dgraph_zero
-    volumes:
-      - ~/local-dgraph-data:/dgraph
     ports:
       - 5080:5080
       - 6080:6080
@@ -29,7 +28,7 @@ services:
     image: dgraph/dgraph:latest
     container_name: lambda_dgraph_alpha
     volumes:
-      - ~/local-dgraph-data:/dgraph
+      - ./acl:/config/acl
     ports:
       - 8080:8080
       - 9080:9080
@@ -39,6 +38,8 @@ services:
         --logtostderr -v=2
         --graphql lambda-url=http://host.docker.internal:8686/graphql-worker
         --telemetry sentry=false
+    environment:
+      DGRAPH_ALPHA_ACL: secret-file=/config/acl/hmac_secret_file
     restart: unless-stopped
 
 

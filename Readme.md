@@ -50,6 +50,7 @@ You can perform a basic test using curl:
 curl localhost:8686/graphql-worker -H "Content-Type: application/json" -d '{"resolver":"User.fullName","parents":[{"firstName":"Dgraph","lastName":"Labs"}]}'
 ```
 
+
 ### option 2 - use one of the scripts in dgraph/contrib/local-test
 
 - change the lambda image used in the script to use local-lambda for your tests
@@ -63,6 +64,23 @@ For testing, update exosystem.config.js
 in VS code, attach to the docker container, and then launch the debug confugration "Attach to Process"
 
 
+### Tests
+run 
+```
+docker-compose up
+``` 
+to get an cluster with Dgraph zero, alpha and lambda server
+
+run 
+
+```
+export DGRAPH_URL=http://localhost:8080
+
+export INTEGRATION_TEST=true 
+
+npm test
+```
+to execute the tests.
 
 
 

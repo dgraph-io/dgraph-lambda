@@ -17,10 +17,10 @@ export async function waitForDgraph() {
   }
 }
 
-export async function loadSchema(schema: string) {
+export async function loadSchema(schema: string, accessJWT:string = "") {
   const response = await fetch(`${process.env.DGRAPH_URL}/admin/schema`, {
     method: "POST",
-    headers: { "Content-Type": "application/graphql" },
+    headers: { "Content-Type": "application/graphql", "X-Dgraph-AccessToken":accessJWT },
     body: schema
   })
   if(response.status !== 200) {
@@ -28,13 +28,62 @@ export async function loadSchema(schema: string) {
   }
 }
 
-export async function runQuery(query: string) {
-  const response = await fetch(`${process.env.DGRAPH_URL}/graphql`, {
+export async function runAdmin(body: string, accessJWT:string = ""):Promise<any>{
+  return fetch(`${process.env.DGRAPH_URL}/admin`, {
+    method: "POST",
+    headers: { "Content-Type": "application/graphql", "X-Dgraph-AccessToken":accessJWT  },
+    body: body
+  }).then((response) => {
+  if (response.status !== 200) {
+    throw new Error("Could Not Fire GraphQL Query")
+  } else {
+    return response.json()
+  }
+  }) 
+}
+export async function login(user: string, password: string, tenant: number) {
+  const response = await fetch(`${process.env.DGRAPH_URL}/admin`, {
     method: "POST",
     headers: { "Content-Type": "application/graphql" },
+    body: `mutation {
+      login(userId: "${user}", password: "${password}", namespace: ${tenant}) {
+        response {
+          accessJWT
+          refreshJWT
+        }
+      }
+    }`
+  })
+  if(response.status !== 200) {
+    throw new Error(`Could Not Login in tenant ${tenant} using ${user} and ${password}`)
+  }
+  let body = await response.json()
+  console.log(body)
+  let token = body["data"]["login"]["response"]["accessJWT"];
+  return token
+}
+
+export async function runQuery(query: string, accessJWT:string = "") {
+  const response = await fetch(`${process.env.DGRAPH_URL}/graphql`, {
+    method: "POST",
+    headers: { "Content-Type": "application/graphql", "X-Dgraph-AccessToken":accessJWT  },
     body: query
   })
   if (response.status !== 200) {
     throw new Error("Could Not Fire GraphQL Query")
   }
+}
+
+
+export async function addNamespace(password:string, accessJWT:string = ""):Promise<any> {
+  const body = `mutation {
+    addNamespace(input: {password: "${password}"})
+     {
+       namespaceId
+       message
+     }
+   }`
+  const response = await runAdmin(body,accessJWT)
+  console.log(response)
+  return response["data"]["addNamespace"]
 }

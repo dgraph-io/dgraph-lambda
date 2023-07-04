@@ -1,13 +1,13 @@
 import { EventTarget } from 'event-target-shim';
 import vm from 'vm';
 import { GraphQLEvent, GraphQLEventWithParent, GraphQLEventFields, ResolverResponse, AuthHeaderField, WebHookGraphQLEvent } from '@slash-graphql/lambda-types'
-
+import * as crypto from "crypto";
 import fetch, { Request, Response, Headers } from "node-fetch";
 import { URL } from "url";
 import atob from "atob";
 import btoa from "btoa";
 import { TextDecoder, TextEncoder } from "util";
-const crypto = require('crypto');
+
 import { graphql, dql } from './dgraph';
 
 function getParents(e: GraphQLEventFields): (Record<string,any>|null)[] {

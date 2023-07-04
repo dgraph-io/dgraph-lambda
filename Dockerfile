@@ -1,4 +1,4 @@
-FROM node:14-alpine as build
+FROM node:20-alpine as build
 
 RUN apk add python3 make g++
 WORKDIR /app
@@ -8,12 +8,12 @@ RUN npm install
 COPY . .
 ARG nodeEnv=production
 ENV NODE_ENV $nodeEnv
-RUN npm run build && if [[ "$nodeEnv" == "production" ]]; then mv node_modules/node-webcrypto-ossl tmp && rm -rf node_modules && mkdir node_modules && mv tmp node_modules/node-webcrypto-ossl && npm install --no-optional; fi
+RUN npm run build
 
 # Used just for tests
 ENTRYPOINT [ "npm", "run" ]
 
-FROM node:14-alpine
+FROM node:20-alpine
 ENV NODE_ENV production
 RUN adduser app -h /app -D
 USER app
