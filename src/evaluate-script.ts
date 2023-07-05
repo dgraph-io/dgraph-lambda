@@ -1,13 +1,13 @@
 import { EventTarget } from 'event-target-shim';
 import vm from 'vm';
 import { GraphQLEvent, GraphQLEventWithParent, GraphQLEventFields, ResolverResponse, AuthHeaderField, WebHookGraphQLEvent } from '@slash-graphql/lambda-types'
-
+import * as crypto from "crypto";
 import fetch, { Request, Response, Headers } from "node-fetch";
 import { URL } from "url";
 import atob from "atob";
 import btoa from "btoa";
 import { TextDecoder, TextEncoder } from "util";
-import { Crypto } from "node-webcrypto-ossl";
+
 import { graphql, dql } from './dgraph';
 
 function getParents(e: GraphQLEventFields): (Record<string,any>|null)[] {
@@ -60,7 +60,7 @@ function newContext(eventTarget: GraphQLResolverEventTarget) {
     btoa,
 
     // Crypto
-    crypto: new Crypto(),
+    crypto,
     TextDecoder,
     TextEncoder,
 
@@ -94,8 +94,8 @@ export function evaluateScript(source: string) {
     const event = {
       ...e,
       respondWith: (x: ResolverResponse) => { retPromise = x },
-      graphql: (query: string, variables: Record<string, any>, ah?: AuthHeaderField) => graphql(query, variables, ah || e.authHeader),
-      dql,
+      graphql: (query: string, variables: Record<string, any>, ah?: AuthHeaderField) => graphql(query, variables, ah || e.authHeader,e.accessJWT),
+      dql: new dql(e.accessJWT),
     }
     if (e.type === '$webhook' && e.event) {
       event.type = `${e.event?.__typename}.${e.event?.operation}` 

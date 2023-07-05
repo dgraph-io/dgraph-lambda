@@ -1,5 +1,5 @@
 import { evaluateScript } from './evaluate-script';
-import { waitForDgraph, loadSchema, runQuery } from './test-utils'
+import { waitForDgraph, loadSchema, runQuery , login, addNamespace} from './test-utils'
 import sleep from 'sleep-promise';
 
 const integrationTest = process.env.INTEGRATION_TEST === "true" ? describe : describe.skip;
@@ -39,13 +39,33 @@ describe(evaluateScript, () => {
   })
 
   integrationTest("dgraph integration", () => {
+    var accessJWT0: string
+    var accessJWT: string
+    var namespaceInfo: any
     beforeAll(async () => {
       await waitForDgraph();
-      await loadSchema(`type Todo { id: ID!, title: String! }`)
-      await sleep(250)
-      await runQuery(`mutation { addTodo(input: [{title: "Kick Ass"}, {title: "Chew Bubblegum"}]) { numUids } }`)
-    })
+      accessJWT0 = await login("groot","password",0)
+      namespaceInfo = await addNamespace("tenant1",accessJWT0)
 
+      accessJWT = await login("groot","tenant1",namespaceInfo["namespaceId"])
+      await loadSchema(`
+      type Todo { id: ID!, title: String! }  
+      type Query {
+        dqlquery(query: String): String @lambda
+        gqlquery(query: String): String @lambda
+        dqlmutate(query: String): String @lambda
+        echo(query: String): String @lambda
+      }`,accessJWT)
+      await sleep(250)
+      await runQuery(`mutation { addTodo(input: [{title: "Kick Ass"}, {title: "Chew Bubblegum"}]) { numUids } }`,accessJWT)
+      
+    })
+    it("obtain accessJWT", async () => {
+      expect(accessJWT != undefined)
+    })
+    it("add namespace ", async () => {
+      expect(namespaceInfo["message"] == "Created namespace successfully")
+    })
     it("works with dgraph graphql", async () => {
       const runScript = evaluateScript(`
         async function todoTitles({graphql}) {
@@ -53,7 +73,7 @@ describe(evaluateScript, () => {
           return results.data.queryTodo.map(t => t.title)
         }
         addGraphQLResolvers({ "Query.todoTitles": todoTitles })`)
-      const results = await runScript({ type: "Query.todoTitles", args: {}, parents: null });
+      const results = await runScript({ type: "Query.todoTitles", args: {}, parents: null , accessJWT: accessJWT});
       expect(new Set(results)).toEqual(new Set(["Kick Ass", "Chew Bubblegum"]))
     })
 
@@ -64,7 +84,7 @@ describe(evaluateScript, () => {
           return results.data.queryTitles.map(t => t["Todo.title"])
         }
         addGraphQLResolvers({ "Query.todoTitles": todoTitles })`)
-      const results = await runScript({ type: "Query.todoTitles", args: {}, parents: null });
+      const results = await runScript({ type: "Query.todoTitles", args: {}, parents: null, accessJWT: accessJWT});
       expect(new Set(results)).toEqual(new Set(["Kick Ass", "Chew Bubblegum"]))
     })
   })
