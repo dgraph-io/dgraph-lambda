@@ -37,7 +37,7 @@ self.addMultiParentGraphQLResolvers({
 ## Running Locally
 
 Create a "local-lambda" docker image
-``` 
+```
 docker build -t local-lambda .
 ```
 ###  option 1 - run the lambda server alone with
@@ -49,6 +49,13 @@ You can perform a basic test using curl:
 ```bash
 curl localhost:8686/graphql-worker -H "Content-Type: application/json" -d '{"resolver":"User.fullName","parents":[{"firstName":"Dgraph","lastName":"Labs"}]}'
 ```
+
+
+To start the lambda server with your own script and be able to use DQL to your local server use the following:
+```
+docker run -d --name lambda -v ~/<path to script.js>:/app/script -p 8686:8686 -e DGRAPH_URL='http://host.docker.internal:8080' local-lambda
+```
+
 
 
 ### option 2 - use one of the scripts in dgraph/contrib/local-test
@@ -65,18 +72,18 @@ in VS code, attach to the docker container, and then launch the debug confugrati
 
 
 ### Tests
-run 
+run
 ```
 docker-compose up
-``` 
+```
 to get an cluster with Dgraph zero, alpha and lambda server
 
-run 
+run
 
 ```
 export DGRAPH_URL=http://localhost:8080
 
-export INTEGRATION_TEST=true 
+export INTEGRATION_TEST=true
 
 npm test
 ```
