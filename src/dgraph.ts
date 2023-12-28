@@ -49,7 +49,7 @@ export class dql {
     return response.json();
   }
 
-  async mutate(mutate: string | Object): Promise<GraphQLResponse> {
+  async mutate(mutate: string | Object, commitNow: boolean = true): Promise<GraphQLResponse> {
     const headers: Record<string, string> = { };
     headers["Content-Type"] = typeof mutate === 'string' ? "application/rdf" : "application/json"
     headers["X-Auth-Token"] = process.env.DGRAPH_TOKEN || "";
@@ -57,7 +57,7 @@ export class dql {
     if (this.accessJWT && this.accessJWT!='') {
       headers["X-Dgraph-AccessToken"] = this.accessJWT;
     }
-    const response = await fetch(`${process.env.DGRAPH_URL}/mutate?commitNow=true`, {
+    const response = await fetch(`${process.env.DGRAPH_URL}/mutate?commitNow=${commitNow}`, {
       method: "POST",
       headers: headers,
       body: typeof mutate === 'string' ? mutate : JSON.stringify(mutate)
