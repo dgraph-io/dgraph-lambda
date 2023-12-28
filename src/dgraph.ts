@@ -91,7 +91,7 @@ export class dql {
       }
     );
     if (response.status !== 200) {
-      throw new Error("Failed to execute DQL Commit");
+      throw new Error("Failed to commit transaction");
     }
     return response.json();
   }
