@@ -68,5 +68,33 @@ export class dql {
     return response.json();
   }
 
+  async commit(txn: {
+    start_ts: number;
+    hash: string;
+    preds: string[];
+    keys: string[];
+  }): Promise<GraphQLResponse> {
+    const headers: Record<string, string> = {};
+    headers["Content-Type"] = "application/json";
+    headers["X-Auth-Token"] = process.env.DGRAPH_TOKEN || "";
+    // add user access token (login to tenant) if defined
+    if (this.accessJWT && this.accessJWT != "") {
+      headers["X-Dgraph-AccessToken"] = this.accessJWT;
+    }
+    const { start_ts, hash, ...rest } = txn;
+    const response = await fetch(
+      `${process.env.DGRAPH_URL}/commit?startTs=${start_ts}&hash=${hash}`,
+      {
+        method: "POST",
+        headers: headers,
+        body: JSON.stringify(rest),
+      }
+    );
+    if (response.status !== 200) {
+      throw new Error("Failed to execute DQL Commit");
+    }
+    return response.json();
+  }
+
 }
 
