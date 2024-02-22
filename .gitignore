@@ -1,2 +1,6 @@
+# IDE
+.idea
+.idea/*
+
 /dist
 /node_modules
