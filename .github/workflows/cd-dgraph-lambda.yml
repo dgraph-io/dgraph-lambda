@@ -30,8 +30,9 @@ jobs:
           sudo apt-get update -y
           # buildx requires these base linux packages to run npm install
           sudo apt-get install qemu qemu-user-static binfmt-support debootstrap -y        
-      - name: Build and push dgraph-lambda images
+      - name: Build and push dgraph-lambda image manifest
         run: |
-          docker buildx create --name builder --driver docker-container
-          docker buildx use builder
-          docker buildx build -t dgraph/dgraph-lambda:${{ env.DGRAPH_LAMBDA_RELEASE_VERSION }} -t dgraph/dgraph-lambda:latest --push --platform=linux/arm64,linux/amd64 .
+          docker manifest create dgraph-lambda:${{ env.DGRAPH_LAMBDA_RELEASE_VERSION }} --amend dgraph-lambda:${{ env.DGRAPH_LAMBDA_RELEASE_VERSION }}-amd64 --amend dgraph-lambda:${{ env.DGRAPH_LAMBDA_RELEASE_VERSION }}-arm64
+          docker manifest push dgraph-lambda:${{ env.DGRAPH_LAMBDA_RELEASE_VERSION }}
+          [[ "${{ inputs.latest }}" = true ]] && docker manifest create dgraph-lambda:latest --amend dgraph-lambda:${{ env.DGRAPH_LAMBDA_RELEASE_VERSION }}-amd64 --amend dgraph-lambda:${{ env.DGRAPH_LAMBDA_RELEASE_VERSION }}-arm64
+          [[ "${{ inputs.latest }}" = true ]] && docker manifest push dgraph-lambda:latest || true
